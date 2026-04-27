@@ -1,11 +1,10 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useRef, useEffect } from 'react';
 import { modules } from '@/data/railEcosystemContent';
 import ModuleCard from '@/components/ModuleCard';
 import {
   STATUS_STYLE,
-  Boxes,
   Rocket,
   Layers,
   Cpu,
@@ -16,7 +15,7 @@ import {
   BrainCircuit,
   type LucideIcon,
 } from '@/components/icons';
-import { Search, X, AlignJustify, LayoutGrid } from 'lucide-react';
+import { Search, X, AlignJustify, LayoutGrid, ChevronDown } from 'lucide-react';
 import type { MaturityStatus } from '@/types/railEcosystem';
 
 // ── Status ordering & labels ──────────────────────────────────────────────────
@@ -60,11 +59,20 @@ const mvpCount       = modules.filter(m => m.status === 'mvp-priority' || m.stat
 const coreCount      = modules.filter(m => m.status === 'core-stage').length;
 const strategicCount = modules.filter(m => m.status === 'strategic-stage').length;
 
-// ── Grid class helper ─────────────────────────────────────────────────────────
+// ── Helpers ───────────────────────────────────────────────────────────────────
 
 function gridClass(count: number): string {
   if (count <= 2) return 'grid grid-cols-1 sm:grid-cols-2 gap-4';
   return 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4';
+}
+
+function pluralModules(n: number): string {
+  const mod10 = n % 10;
+  const mod100 = n % 100;
+  if (mod100 >= 11 && mod100 <= 19) return `${n} модулей`;
+  if (mod10 === 1) return `${n} модуль`;
+  if (mod10 >= 2 && mod10 <= 4) return `${n} модуля`;
+  return `${n} модулей`;
 }
 
 // ── Page ──────────────────────────────────────────────────────────────────────
@@ -72,9 +80,22 @@ function gridClass(count: number): string {
 type ViewMode = 'compact' | 'detailed';
 
 export default function ModulesPage() {
-  const [search, setSearch]           = useState('');
+  const [search, setSearch]             = useState('');
   const [statusFilter, setStatusFilter] = useState<MaturityStatus | 'all'>('all');
-  const [viewMode, setViewMode]       = useState<ViewMode>('compact');
+  const [viewMode, setViewMode]         = useState<ViewMode>('compact');
+  const [statusOpen, setStatusOpen]     = useState(false);
+  const dropdownRef                     = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!statusOpen) return;
+    const handler = (e: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
+        setStatusOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handler);
+    return () => document.removeEventListener('mousedown', handler);
+  }, [statusOpen]);
 
   const filtered = useMemo(() => {
     const q = search.toLowerCase().trim();
@@ -128,7 +149,15 @@ export default function ModulesPage() {
               className="w-14 h-14 rounded-2xl flex items-center justify-center shrink-0 shadow-xl"
               style={{ background: 'rgba(124,58,237,0.18)', border: '1px solid rgba(124,58,237,0.38)' }}
             >
-              <Boxes className="w-7 h-7" style={{ color: '#a78bfa' }} />
+              {/* Railroad track icon */}
+              <svg className="w-7 h-7" viewBox="0 0 24 24" fill="none" stroke="#a78bfa" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <line x1="6" y1="2" x2="6" y2="22" />
+                <line x1="18" y1="2" x2="18" y2="22" />
+                <line x1="6" y1="5"  x2="18" y2="5" />
+                <line x1="6" y1="10" x2="18" y2="10" />
+                <line x1="6" y1="15" x2="18" y2="15" />
+                <line x1="6" y1="20" x2="18" y2="20" />
+              </svg>
             </div>
             <div className="flex-1 min-w-0">
               <div
@@ -150,15 +179,15 @@ export default function ModulesPage() {
 
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
             {[
-              { value: modules.length, label: 'Всего модулей',  color: '#94a3b8' },
-              { value: mvpCount,       label: 'В MVP',           color: '#60a5fa' },
-              { value: coreCount,      label: 'Ядро платформы', color: '#a78bfa' },
-              { value: strategicCount, label: 'Стратегических', color: '#6ee7b7' },
+              { value: modules.length, label: 'Всего модулей',  color: '#94a3b8', accent: 'rgba(148,163,184,0.12)' },
+              { value: mvpCount,       label: 'В MVP',           color: '#60a5fa', accent: 'rgba(37,99,235,0.18)'   },
+              { value: coreCount,      label: 'Ядро платформы', color: '#fbbf24', accent: 'rgba(245,158,11,0.18)'  },
+              { value: strategicCount, label: 'Стратегических', color: '#6ee7b7', accent: 'rgba(16,185,129,0.12)'  },
             ].map((m) => (
               <div
                 key={m.label}
                 className="rounded-xl px-4 py-3"
-                style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.10)' }}
+                style={{ background: m.accent, border: '1px solid rgba(255,255,255,0.10)' }}
               >
                 <div className="text-2xl sm:text-3xl font-bold leading-none mb-1" style={{ color: m.color }}>
                   {m.value}
@@ -189,23 +218,54 @@ export default function ModulesPage() {
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 placeholder="Поиск по названию..."
-                className="w-full rounded-lg pl-9 pr-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-violet-500 placeholder:text-slate-500"
+                className="w-full rounded-lg pl-9 pr-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-violet-500 placeholder:text-slate-400"
                 style={{ background: '#0f172a', border: '1px solid #334155', color: '#f1f5f9' }}
               />
             </div>
 
-            {/* Status filter */}
-            <select
-              value={statusFilter}
-              onChange={(e) => setStatusFilter(e.target.value as MaturityStatus | 'all')}
-              className="rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-violet-500"
-              style={{ background: '#0f172a', border: '1px solid #334155', color: '#cbd5e1' }}
-            >
-              <option value="all">Все этапы</option>
-              {statusOrder.map((s) => (
-                <option key={s} value={s}>{statusLabels[s]}</option>
-              ))}
-            </select>
+            {/* Status filter — custom dropdown */}
+            <div className="relative" ref={dropdownRef}>
+              <button
+                onClick={() => setStatusOpen(v => !v)}
+                className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-violet-500 transition-colors hover:bg-slate-700/40"
+                style={{ background: '#0f172a', border: '1px solid #334155', color: '#cbd5e1' }}
+              >
+                <span className="truncate max-w-[160px]">
+                  {statusFilter === 'all' ? 'Все этапы' : statusLabels[statusFilter]}
+                </span>
+                <ChevronDown
+                  className={`w-3.5 h-3.5 shrink-0 transition-transform duration-150 ${statusOpen ? 'rotate-180' : ''}`}
+                  style={{ color: '#64748b' }}
+                />
+              </button>
+              {statusOpen && (
+                <div
+                  className="absolute top-full left-0 mt-1.5 w-60 rounded-xl overflow-hidden shadow-2xl z-20"
+                  style={{ background: '#1e293b', border: '1px solid #334155' }}
+                >
+                  <button
+                    onClick={() => { setStatusFilter('all'); setStatusOpen(false); }}
+                    className="w-full text-left px-3.5 py-2.5 text-sm transition-colors hover:bg-slate-700/60"
+                    style={{ color: statusFilter === 'all' ? '#a78bfa' : '#cbd5e1' }}
+                  >
+                    Все этапы
+                  </button>
+                  {statusOrder.map((s) => (
+                    <button
+                      key={s}
+                      onClick={() => { setStatusFilter(s); setStatusOpen(false); }}
+                      className="w-full text-left px-3.5 py-2.5 text-sm transition-colors hover:bg-slate-700/60 border-t"
+                      style={{
+                        color: statusFilter === s ? '#a78bfa' : '#cbd5e1',
+                        borderColor: '#334155',
+                      }}
+                    >
+                      {statusLabels[s]}
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
 
             {/* Clear filter */}
             {isFiltering && (
@@ -288,12 +348,17 @@ export default function ModulesPage() {
                       </div>
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-2.5 flex-wrap">
-                          <h2 className="text-sm font-bold" style={{ color: style.text }}>{label}</h2>
+                          <h2
+                            className="text-sm font-bold pl-2.5 border-l-[3px]"
+                            style={{ color: style.text, borderColor: style.dot }}
+                          >
+                            {label}
+                          </h2>
                           <span
                             className="text-[10px] font-bold px-2 py-0.5 rounded-full border shrink-0"
                             style={{ background: style.bg, color: style.text, borderColor: style.border }}
                           >
-                            {items.length}
+                            {pluralModules(items.length)}
                           </span>
                         </div>
                         <p className="text-xs text-slate-500 mt-0.5">{meta.description}</p>

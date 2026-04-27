@@ -80,10 +80,7 @@ export default function ContoursPage() {
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-3 flex-wrap">
                       <h2 className="text-lg font-bold text-slate-900">{contour.name}</h2>
-                      <span
-                        className="text-[10px] font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-full shrink-0"
-                        style={{ background: contour.color + '15', color: contour.color }}
-                      >
+                      <span className="text-xs font-medium px-3 py-1 rounded-full shrink-0 bg-slate-100 text-slate-600">
                         {contour.modules.length} модулей
                       </span>
                     </div>
@@ -133,18 +130,15 @@ export default function ContoursPage() {
                     <div className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-5">
                       Цифровые модули
                     </div>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                    <div className="flex flex-wrap gap-2">
                       {contourModules.map((m) => (
-                        <div
+                        <a
                           key={m.id}
-                          className="group border border-slate-200 rounded-xl p-3.5 bg-slate-50 hover:border-slate-300 hover:bg-white hover:shadow-sm transition-all duration-150"
+                          href={`/modules#${m.id}`}
+                          className="bg-slate-100 text-slate-600 hover:bg-slate-200 hover:text-slate-800 rounded-md px-2.5 py-1 text-sm transition-colors cursor-pointer"
                         >
-                          <div className="flex items-start justify-between gap-1.5">
-                            <div className="text-sm font-semibold text-slate-800 group-hover:text-slate-900">{m.name}</div>
-                            <div className="w-1.5 h-1.5 rounded-full shrink-0 mt-1.5" style={{ background: contour.color }} />
-                          </div>
-                          <div className="text-xs text-slate-400 mt-0.5 leading-snug">{m.russianName}</div>
-                        </div>
+                          {m.name}
+                        </a>
                       ))}
                     </div>
                   </div>

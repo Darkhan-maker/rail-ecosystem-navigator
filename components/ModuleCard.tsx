@@ -30,8 +30,17 @@ export default function ModuleCard({
   // ── Featured (wide) layout ────────────────────────────────────────────────
   if (featured) {
     return (
-      <div className="group bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-sm hover:shadow-xl transition-all duration-200">
+      <div className="group relative bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-sm hover:shadow-xl hover:-translate-y-0.5 hover:border-blue-400 transition-all duration-200">
         <div className="h-[3px]" style={{ background: status.dot }} />
+
+        {/* Floating status badge */}
+        <span
+          className="absolute top-[14px] right-3 z-10 text-[10px] font-bold px-2 py-0.5 rounded-full border whitespace-nowrap"
+          style={{ background: status.bg, color: status.text, borderColor: status.border }}
+        >
+          {status.label}
+        </span>
+
         <div className="p-6 flex flex-col sm:flex-row gap-6">
 
           {/* Left column — identity & actions */}
@@ -43,28 +52,21 @@ export default function ModuleCard({
               >
                 <Icon className="w-6 h-6" style={{ color: status.dot }} />
               </div>
-              <div className="min-w-0">
+              <div className="min-w-0 pr-16 sm:pr-0">
                 <div className="text-base font-bold text-slate-900 leading-snug">{module.name}</div>
                 <div className="text-xs text-slate-400 mt-0.5">{module.russianName}</div>
               </div>
             </div>
 
-            <span
-              className="inline-flex text-[10px] font-bold px-2.5 py-1 rounded-full border mb-4"
-              style={{ background: status.bg, color: status.text, borderColor: status.border }}
-            >
-              {status.label}
-            </span>
-
             {relatedVisible.length > 0 && (
               <div className="mb-5">
-                <div className="text-xs font-semibold text-slate-400 mb-1.5">Связанные</div>
+                <div className="text-[10px] font-semibold uppercase tracking-wider text-slate-400 mb-1.5">Связанные</div>
                 <div className="flex flex-wrap gap-1.5">
                   {relatedVisible.map((id) => (
                     <Link
                       key={id}
                       href={`/modules#${id}`}
-                      className="text-xs px-2.5 py-0.5 rounded-full border border-slate-200 bg-slate-50 text-slate-500 hover:border-blue-200 hover:bg-blue-50 hover:text-blue-600 transition-colors"
+                      className="text-xs px-2.5 py-0.5 rounded-full border border-violet-200 bg-violet-50 text-violet-700 hover:border-violet-300 hover:bg-violet-100 transition-colors"
                     >
                       {moduleNameMap[id] ?? id}
                     </Link>
@@ -106,10 +108,10 @@ export default function ModuleCard({
 
             {detailed && module.inputData && module.inputData.length > 0 && (
               <div>
-                <div className="text-xs font-semibold text-slate-400 mb-1.5">Входные данные</div>
+                <div className="text-[10px] font-semibold uppercase tracking-wider text-slate-500 mb-1.5">Входные данные</div>
                 <div className="flex flex-wrap gap-1">
                   {module.inputData.map((d) => (
-                    <span key={d} className="text-[10px] bg-blue-50 text-blue-700 border border-blue-100 px-2 py-0.5 rounded-full">{d}</span>
+                    <span key={d} className="text-[10px] bg-green-100 text-green-800 border border-green-200 px-2 py-0.5 rounded-full">{d}</span>
                   ))}
                 </div>
               </div>
@@ -117,10 +119,10 @@ export default function ModuleCard({
 
             {detailed && module.outputData && module.outputData.length > 0 && (
               <div>
-                <div className="text-xs font-semibold text-slate-400 mb-1.5">Выходные данные</div>
+                <div className="text-[10px] font-semibold uppercase tracking-wider text-slate-500 mb-1.5">Выходные данные</div>
                 <div className="flex flex-wrap gap-1">
                   {module.outputData.map((d) => (
-                    <span key={d} className="text-[10px] bg-emerald-50 text-emerald-700 border border-emerald-100 px-2 py-0.5 rounded-full">{d}</span>
+                    <span key={d} className="text-[10px] bg-blue-100 text-blue-800 border border-blue-100 px-2 py-0.5 rounded-full">{d}</span>
                   ))}
                 </div>
               </div>
@@ -133,12 +135,20 @@ export default function ModuleCard({
 
   // ── Regular card ──────────────────────────────────────────────────────────
   return (
-    <div className="group relative bg-white rounded-2xl border border-slate-200 flex flex-col overflow-hidden shadow-sm hover:shadow-xl hover:-translate-y-0.5 transition-all duration-200">
+    <div className="group relative bg-white rounded-2xl border border-slate-200 flex flex-col overflow-hidden shadow-sm hover:shadow-xl hover:-translate-y-0.5 hover:border-blue-400 transition-all duration-200">
       <div className="h-[3px] w-full shrink-0" style={{ background: status.dot }} />
+
+      {/* Floating status badge */}
+      <span
+        className="absolute top-[14px] right-3 z-10 text-[10px] font-bold px-2 py-0.5 rounded-full border whitespace-nowrap"
+        style={{ background: status.bg, color: status.text, borderColor: status.border }}
+      >
+        {status.label}
+      </span>
 
       <div className="p-5 flex flex-col gap-4 flex-1">
 
-        {/* Header: icon + name + badge */}
+        {/* Header: icon + name */}
         <div className="flex items-start gap-3">
           <div
             className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0"
@@ -146,23 +156,13 @@ export default function ModuleCard({
           >
             <Icon className="w-5 h-5" style={{ color: status.dot }} />
           </div>
-          <div className="flex-1 min-w-0">
-            <div className="flex items-start justify-between gap-2">
-              <div className="min-w-0 flex-1">
-                <div className="text-sm font-bold text-slate-900 leading-snug">{module.name}</div>
-                <div className="text-xs text-slate-400 mt-0.5 truncate">{module.russianName}</div>
-              </div>
-              <span
-                className="shrink-0 text-[10px] font-bold px-2 py-0.5 rounded-full border whitespace-nowrap"
-                style={{ background: status.bg, color: status.text, borderColor: status.border }}
-              >
-                {status.label}
-              </span>
-            </div>
+          <div className="flex-1 min-w-0 pr-16">
+            <div className="text-sm font-bold text-slate-900 leading-snug">{module.name}</div>
+            <div className="text-xs text-slate-400 mt-0.5 truncate">{module.russianName}</div>
           </div>
         </div>
 
-        {/* Description — text-sm for readability */}
+        {/* Description */}
         <p className="text-sm text-slate-600 leading-relaxed">{module.description}</p>
 
         {/* Details box — detailed mode only */}
@@ -178,10 +178,10 @@ export default function ModuleCard({
         {/* Input data — detailed mode only */}
         {detailed && module.inputData && module.inputData.length > 0 && (
           <div>
-            <div className="text-xs font-semibold text-slate-400 mb-1.5">Входные данные</div>
+            <div className="text-[10px] font-semibold uppercase tracking-wider text-slate-500 mb-1.5">Входные данные</div>
             <div className="flex flex-wrap gap-1">
               {module.inputData.map((d) => (
-                <span key={d} className="text-[10px] bg-blue-50 text-blue-700 border border-blue-100 px-2 py-0.5 rounded-full">{d}</span>
+                <span key={d} className="text-[10px] bg-green-100 text-green-800 border border-green-200 px-2 py-0.5 rounded-full">{d}</span>
               ))}
             </div>
           </div>
@@ -190,10 +190,10 @@ export default function ModuleCard({
         {/* Output data — detailed mode only */}
         {detailed && module.outputData && module.outputData.length > 0 && (
           <div>
-            <div className="text-xs font-semibold text-slate-400 mb-1.5">Выходные данные</div>
+            <div className="text-[10px] font-semibold uppercase tracking-wider text-slate-500 mb-1.5">Выходные данные</div>
             <div className="flex flex-wrap gap-1">
               {module.outputData.map((d) => (
-                <span key={d} className="text-[10px] bg-emerald-50 text-emerald-700 border border-emerald-100 px-2 py-0.5 rounded-full">{d}</span>
+                <span key={d} className="text-[10px] bg-blue-100 text-blue-800 border border-blue-100 px-2 py-0.5 rounded-full">{d}</span>
               ))}
             </div>
           </div>
@@ -202,13 +202,13 @@ export default function ModuleCard({
         {/* Related modules */}
         {relatedVisible.length > 0 && (
           <div>
-            <div className="text-xs font-semibold text-slate-400 mb-1.5">Связанные</div>
+            <div className="text-[10px] font-semibold uppercase tracking-wider text-slate-500 mb-1.5">Связанные модули</div>
             <div className="flex flex-wrap gap-1">
               {relatedVisible.map((id) => (
                 <Link
                   key={id}
                   href={`/modules#${id}`}
-                  className="text-xs px-2 py-0.5 rounded-full border border-slate-200 bg-slate-50 text-slate-500 hover:border-blue-200 hover:bg-blue-50 hover:text-blue-600 transition-colors"
+                  className="text-xs px-2 py-0.5 rounded-full border border-violet-200 bg-violet-50 text-violet-700 hover:border-violet-300 hover:bg-violet-100 transition-colors"
                 >
                   {moduleNameMap[id] ?? id}
                 </Link>

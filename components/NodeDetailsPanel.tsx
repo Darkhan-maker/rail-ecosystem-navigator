@@ -28,7 +28,6 @@ export default function NodeDetailsPanel({ node, onClose }: NodeDetailsPanelProp
 
   const { data } = node;
   const meta = TYPE_META[data.nodeType] ?? TYPE_META.org;
-
   const NodeIcon: LucideIcon = NODE_TYPE_ICONS[data.nodeType] ?? Package;
 
   const relatedModuleObjects = (data.relatedModules ?? [])
@@ -58,7 +57,7 @@ export default function NodeDetailsPanel({ node, onClose }: NodeDetailsPanelProp
         </div>
         <button
           onClick={onClose}
-          className="p-1.5 rounded-lg hover:bg-slate-200 text-slate-400 hover:text-slate-600 transition-colors shrink-0 ml-2"
+          className="p-1.5 rounded-lg hover:bg-slate-200 text-slate-400 hover:text-slate-600 transition-colors shrink-0 ml-2 cursor-pointer"
           aria-label="Закрыть"
         >
           <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
@@ -82,10 +81,10 @@ export default function NodeDetailsPanel({ node, onClose }: NodeDetailsPanelProp
         )}
 
         {data.inputData && data.inputData.length > 0 && (
-          <Section label="Входные данные">
+          <Section label="Входные данные" labelColor="#15803d">
             <div className="flex flex-wrap gap-1.5">
               {data.inputData.map(d => (
-                <span key={d} className="text-[11px] bg-blue-50 text-blue-700 border border-blue-100 px-2 py-0.5 rounded-full">
+                <span key={d} className="text-[11px] bg-green-50 text-green-800 border border-green-200 px-2 py-0.5 rounded-md">
                   {d}
                 </span>
               ))}
@@ -94,10 +93,10 @@ export default function NodeDetailsPanel({ node, onClose }: NodeDetailsPanelProp
         )}
 
         {data.outputData && data.outputData.length > 0 && (
-          <Section label="Выходные данные">
+          <Section label="Выходные данные" labelColor="#1d4ed8">
             <div className="flex flex-wrap gap-1.5">
               {data.outputData.map(d => (
-                <span key={d} className="text-[11px] bg-emerald-50 text-emerald-700 border border-emerald-100 px-2 py-0.5 rounded-full">
+                <span key={d} className="text-[11px] bg-blue-50 text-blue-800 border border-blue-200 px-2 py-0.5 rounded-md">
                   {d}
                 </span>
               ))}
@@ -106,7 +105,7 @@ export default function NodeDetailsPanel({ node, onClose }: NodeDetailsPanelProp
         )}
 
         {relatedModuleObjects.length > 0 && (
-          <Section label="Связанные модули">
+          <Section label="Связанные модули" labelColor="#5b21b6">
             <div className="space-y-1.5">
               {relatedModuleObjects.map(m => {
                 if (!m) return null;
@@ -115,11 +114,11 @@ export default function NodeDetailsPanel({ node, onClose }: NodeDetailsPanelProp
                   <Link
                     key={m.id}
                     href={`/modules#${m.id}`}
-                    className="flex items-center gap-2 px-3 py-2 rounded-lg border border-slate-100 bg-slate-50 hover:border-blue-200 hover:bg-blue-50 transition-colors group"
+                    className="flex items-center gap-2 px-3 py-2 rounded-lg border border-slate-100 bg-slate-50 hover:border-violet-200 hover:bg-violet-50 transition-colors group cursor-pointer"
                   >
-                    <MIcon className="w-3 h-3 text-blue-400 shrink-0 group-hover:text-blue-600" />
+                    <MIcon className="w-3 h-3 text-violet-400 shrink-0 group-hover:text-violet-600" />
                     <div className="min-w-0">
-                      <div className="text-xs font-semibold text-slate-800 group-hover:text-blue-700 truncate">{m.name}</div>
+                      <div className="text-xs font-semibold text-slate-800 group-hover:text-violet-700 truncate">{m.name}</div>
                       <div className="text-[10px] text-slate-400 truncate">{m.russianName}</div>
                     </div>
                   </Link>
@@ -139,10 +138,15 @@ export default function NodeDetailsPanel({ node, onClose }: NodeDetailsPanelProp
   );
 }
 
-function Section({ label, children }: { label: string; children: React.ReactNode }) {
+function Section({ label, labelColor, children }: { label: string; labelColor?: string; children: React.ReactNode }) {
   return (
     <div>
-      <div className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider mb-1.5">{label}</div>
+      <div
+        className="text-[10px] font-semibold uppercase tracking-wider mb-1.5"
+        style={{ color: labelColor ?? '#94a3b8' }}
+      >
+        {label}
+      </div>
       {children}
     </div>
   );

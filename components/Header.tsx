@@ -20,12 +20,15 @@ export default function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
 
   return (
-    <header className="sticky top-0 z-50 border-b border-slate-700/60" style={{ background: '#0f172a' }}>
+    <header className="sticky top-0 z-50" style={{ background: '#0f172a' }}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-14">
           {/* Brand */}
           <Link href="/" className="flex items-center gap-2.5 shrink-0">
-            <span className="inline-flex w-7 h-7 bg-blue-500 rounded-md items-center justify-center text-white text-[11px] font-bold tracking-tight leading-none shadow-sm">
+            <span
+              className="inline-flex w-7 h-7 rounded-lg items-center justify-center text-white text-[11px] font-bold tracking-tight leading-none shadow-sm"
+              style={{ background: 'linear-gradient(135deg, #2563eb, #7c3aed)' }}
+            >
               RE
             </span>
             <span className="hidden sm:flex flex-col leading-none">
@@ -92,6 +95,9 @@ export default function Header() {
           })}
         </div>
       )}
+
+      {/* Brand accent stripe */}
+      <div className="h-[2px]" style={{ background: 'linear-gradient(90deg, #2563eb 0%, #7c3aed 50%, #2563eb 100%)' }} />
     </header>
   );
 }
