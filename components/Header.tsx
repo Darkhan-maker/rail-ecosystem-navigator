@@ -25,15 +25,12 @@ export default function Header() {
         <div className="flex items-center justify-between h-14">
           {/* Brand */}
           <Link href="/" className="flex items-center gap-2.5 shrink-0">
-            <span
-              className="inline-flex w-7 h-7 rounded-lg items-center justify-center text-white text-[11px] font-bold tracking-tight leading-none shadow-sm"
-              style={{ background: 'linear-gradient(135deg, #2563eb, #7c3aed)' }}
-            >
+            <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-gradient-to-br from-blue-600 to-blue-400 text-white text-sm font-bold shadow-sm shrink-0">
               RE
-            </span>
-            <span className="hidden sm:flex flex-col leading-none">
+            </div>
+            <span className="hidden sm:flex flex-col leading-none gap-0.5">
               <span className="text-white text-sm font-semibold tracking-tight">Rail Ecosystem</span>
-              <span className="text-slate-400 text-[10px] font-medium tracking-wide">Navigator v0.1</span>
+              <span className="text-slate-400 text-xs font-medium">Navigator v0.1</span>
             </span>
           </Link>
 

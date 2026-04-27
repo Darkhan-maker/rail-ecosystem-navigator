@@ -59,6 +59,19 @@ const mvpCount       = modules.filter(m => m.status === 'mvp-priority' || m.stat
 const coreCount      = modules.filter(m => m.status === 'core-stage').length;
 const strategicCount = modules.filter(m => m.status === 'strategic-stage').length;
 
+// ── Group header border colors (per status) ───────────────────────────────────
+
+const GROUP_BORDER_COLOR: Partial<Record<MaturityStatus, string>> = {
+  'mvp-priority':   '#3b82f6',
+  'mvp-support':    '#3b82f6',
+  'core-stage':     '#f59e0b',
+  'next-stage':     '#8b5cf6',
+  'future-stage':   '#94a3b8',
+  'parallel-stage': '#94a3b8',
+  'planned-stage':  '#cbd5e1',
+  'strategic-stage':'#f87171',
+};
+
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
 function gridClass(count: number): string {
@@ -134,7 +147,7 @@ export default function ModulesPage() {
         <div
           className="absolute inset-0 pointer-events-none"
           style={{
-            backgroundImage: 'radial-gradient(circle, rgba(148,163,184,0.15) 1px, transparent 1px)',
+            backgroundImage: 'radial-gradient(circle, rgba(71,85,105,0.4) 1px, transparent 1px)',
             backgroundSize: '24px 24px',
           }}
         />
@@ -177,24 +190,19 @@ export default function ModulesPage() {
             </div>
           </div>
 
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-            {[
-              { value: modules.length, label: 'Всего модулей',  color: '#94a3b8', accent: 'rgba(148,163,184,0.12)' },
-              { value: mvpCount,       label: 'В MVP',           color: '#60a5fa', accent: 'rgba(37,99,235,0.18)'   },
-              { value: coreCount,      label: 'Ядро платформы', color: '#fbbf24', accent: 'rgba(245,158,11,0.18)'  },
-              { value: strategicCount, label: 'Стратегических', color: '#6ee7b7', accent: 'rgba(16,185,129,0.12)'  },
-            ].map((m) => (
-              <div
-                key={m.label}
-                className="rounded-xl px-4 py-3"
-                style={{ background: m.accent, border: '1px solid rgba(255,255,255,0.10)' }}
-              >
-                <div className="text-2xl sm:text-3xl font-bold leading-none mb-1" style={{ color: m.color }}>
-                  {m.value}
-                </div>
-                <div className="text-xs font-medium" style={{ color: '#94a3b8' }}>{m.label}</div>
-              </div>
-            ))}
+          <div className="flex gap-3 flex-wrap">
+            <span className="rounded-full px-3 py-1 text-sm font-medium" style={{ background: 'rgba(71,85,105,0.5)', color: '#cbd5e1' }}>
+              {modules.length} модулей
+            </span>
+            <span className="rounded-full px-3 py-1 text-sm font-medium border" style={{ background: 'rgba(37,99,235,0.2)', color: '#60a5fa', borderColor: 'rgba(37,99,235,0.3)' }}>
+              {mvpCount} в MVP
+            </span>
+            <span className="rounded-full px-3 py-1 text-sm font-medium border" style={{ background: 'rgba(245,158,11,0.2)', color: '#fbbf24', borderColor: 'rgba(245,158,11,0.3)' }}>
+              {coreCount} ядра платформы
+            </span>
+            <span className="rounded-full px-3 py-1 text-sm font-medium border" style={{ background: 'rgba(239,68,68,0.2)', color: '#f87171', borderColor: 'rgba(239,68,68,0.3)' }}>
+              {strategicCount} стратегических
+            </span>
           </div>
         </div>
       </div>
@@ -280,30 +288,25 @@ export default function ModulesPage() {
             )}
 
             {/* View toggle */}
-            <div
-              className="flex rounded-lg overflow-hidden shrink-0 ml-auto"
-              style={{ border: '1px solid #334155' }}
-            >
+            <div className="flex bg-slate-100 rounded-lg p-1 gap-1 shrink-0 ml-auto">
               <button
                 onClick={() => setViewMode('compact')}
-                className="flex items-center gap-1.5 px-3 py-2 text-xs font-medium transition-colors"
-                style={
+                className={`flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-md transition-all duration-150 ${
                   viewMode === 'compact'
-                    ? { background: '#7c3aed', color: '#fff' }
-                    : { background: 'transparent', color: '#94a3b8' }
-                }
+                    ? 'bg-white shadow-sm text-slate-700'
+                    : 'text-slate-500 hover:text-slate-700'
+                }`}
               >
                 <LayoutGrid className="w-3.5 h-3.5" />
                 Кратко
               </button>
               <button
                 onClick={() => setViewMode('detailed')}
-                className="flex items-center gap-1.5 px-3 py-2 text-xs font-medium transition-colors"
-                style={
+                className={`flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-md transition-all duration-150 ${
                   viewMode === 'detailed'
-                    ? { background: '#7c3aed', color: '#fff' }
-                    : { background: 'transparent', color: '#94a3b8' }
-                }
+                    ? 'bg-white shadow-sm text-slate-700'
+                    : 'text-slate-500 hover:text-slate-700'
+                }`}
               >
                 <AlignJustify className="w-3.5 h-3.5" />
                 Подробно
@@ -349,8 +352,8 @@ export default function ModulesPage() {
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-2.5 flex-wrap">
                           <h2
-                            className="text-sm font-bold pl-2.5 border-l-[3px]"
-                            style={{ color: style.text, borderColor: style.dot }}
+                            className="text-sm font-bold pl-3 border-l-4"
+                            style={{ color: style.text, borderColor: GROUP_BORDER_COLOR[status] ?? style.dot }}
                           >
                             {label}
                           </h2>

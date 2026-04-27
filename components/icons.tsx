@@ -99,7 +99,7 @@ export const STATUS_STYLE: Record<string, { label: string; bg: string; text: str
   'future-stage':   { label: 'Будущий',      bg: '#f9fafb', text: '#374151', border: '#d1d5db', dot: '#9ca3af' },
   'parallel-stage': { label: 'Параллельный', bg: '#fff7ed', text: '#9a3412', border: '#fed7aa', dot: '#f97316' },
   'planned-stage':  { label: 'Запланирован', bg: '#fffbeb', text: '#78350f', border: '#fde68a', dot: '#f59e0b' },
-  'strategic-stage':{ label: 'Стратег.',     bg: '#f5f3ff', text: '#4c1d95', border: '#ddd6fe', dot: '#8b5cf6' },
+  'strategic-stage':{ label: 'Стратегический', bg: '#f5f3ff', text: '#4c1d95', border: '#ddd6fe', dot: '#8b5cf6' },
 };
 
 // ─── Contour icon registry ─────────────────────────────────────────────────────

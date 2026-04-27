@@ -108,10 +108,10 @@ export default function ModuleCard({
 
             {detailed && module.inputData && module.inputData.length > 0 && (
               <div>
-                <div className="text-[10px] font-semibold uppercase tracking-wider text-slate-500 mb-1.5">Входные данные</div>
+                <div className="text-[10px] font-semibold uppercase tracking-wider text-green-700 mb-1.5">Входные данные</div>
                 <div className="flex flex-wrap gap-1">
                   {module.inputData.map((d) => (
-                    <span key={d} className="text-[10px] bg-green-100 text-green-800 border border-green-200 px-2 py-0.5 rounded-full">{d}</span>
+                    <span key={d} className="text-xs bg-green-50 text-green-700 border border-green-200 px-2 py-0.5 rounded-md">{d}</span>
                   ))}
                 </div>
               </div>
@@ -119,10 +119,10 @@ export default function ModuleCard({
 
             {detailed && module.outputData && module.outputData.length > 0 && (
               <div>
-                <div className="text-[10px] font-semibold uppercase tracking-wider text-slate-500 mb-1.5">Выходные данные</div>
+                <div className="text-[10px] font-semibold uppercase tracking-wider text-blue-700 mb-1.5">Выходные данные</div>
                 <div className="flex flex-wrap gap-1">
                   {module.outputData.map((d) => (
-                    <span key={d} className="text-[10px] bg-blue-100 text-blue-800 border border-blue-100 px-2 py-0.5 rounded-full">{d}</span>
+                    <span key={d} className="text-xs bg-blue-50 text-blue-700 border border-blue-200 px-2 py-0.5 rounded-md">{d}</span>
                   ))}
                 </div>
               </div>
@@ -178,10 +178,10 @@ export default function ModuleCard({
         {/* Input data — detailed mode only */}
         {detailed && module.inputData && module.inputData.length > 0 && (
           <div>
-            <div className="text-[10px] font-semibold uppercase tracking-wider text-slate-500 mb-1.5">Входные данные</div>
+            <div className="text-[10px] font-semibold uppercase tracking-wider text-green-700 mb-1.5">Входные данные</div>
             <div className="flex flex-wrap gap-1">
               {module.inputData.map((d) => (
-                <span key={d} className="text-[10px] bg-green-100 text-green-800 border border-green-200 px-2 py-0.5 rounded-full">{d}</span>
+                <span key={d} className="text-xs bg-green-50 text-green-700 border border-green-200 px-2 py-0.5 rounded-md">{d}</span>
               ))}
             </div>
           </div>
@@ -190,10 +190,10 @@ export default function ModuleCard({
         {/* Output data — detailed mode only */}
         {detailed && module.outputData && module.outputData.length > 0 && (
           <div>
-            <div className="text-[10px] font-semibold uppercase tracking-wider text-slate-500 mb-1.5">Выходные данные</div>
+            <div className="text-[10px] font-semibold uppercase tracking-wider text-blue-700 mb-1.5">Выходные данные</div>
             <div className="flex flex-wrap gap-1">
               {module.outputData.map((d) => (
-                <span key={d} className="text-[10px] bg-blue-100 text-blue-800 border border-blue-100 px-2 py-0.5 rounded-full">{d}</span>
+                <span key={d} className="text-xs bg-blue-50 text-blue-700 border border-blue-200 px-2 py-0.5 rounded-md">{d}</span>
               ))}
             </div>
           </div>
