@@ -1,5 +1,5 @@
 import { roadmapStages, modules } from '@/data/railEcosystemContent';
-import SectionTitle from '@/components/SectionTitle';
+import PageHeader from '@/components/PageHeader';
 
 const statusConfig = {
   current: {
@@ -26,12 +26,20 @@ const statusConfig = {
 };
 
 export default function RoadmapPage() {
+  const currentCount = roadmapStages.filter(s => s.status === 'current').length;
   return (
-    <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
-      <SectionTitle
+    <div>
+      <PageHeader
+        icon="🗺"
         title="Дорожная карта Rail Ecosystem"
-        subtitle="Поэтапное развитие цифровой экосистемы — от MVP пилота до интеллектуальной платформы"
+        lead="Поэтапное развитие цифровой экосистемы — от MVP пилота до интеллектуальной платформы"
+        chips={[
+          { label: `${roadmapStages.length} этапов`, color: '#2563eb' },
+          { label: `${currentCount} активный`, color: '#16a34a' },
+          { label: `${roadmapStages.length - currentCount} планируемых` },
+        ]}
       />
+    <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
 
       <div className="relative">
         {/* Vertical connector line */}
@@ -97,6 +105,7 @@ export default function RoadmapPage() {
           })}
         </div>
       </div>
+    </div>
     </div>
   );
 }

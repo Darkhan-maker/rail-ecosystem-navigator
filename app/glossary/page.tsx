@@ -2,7 +2,7 @@
 
 import { useState, useMemo } from 'react';
 import { glossary } from '@/data/railEcosystemContent';
-import SectionTitle from '@/components/SectionTitle';
+import PageHeader from '@/components/PageHeader';
 
 export default function GlossaryPage() {
   const [search, setSearch] = useState('');
@@ -19,11 +19,14 @@ export default function GlossaryPage() {
   }, [search]);
 
   return (
-    <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
-      <SectionTitle
+    <div>
+      <PageHeader
+        icon="📖"
         title="Глоссарий"
-        subtitle="Термины и аббревиатуры, используемые в Rail Ecosystem"
+        lead="Термины и аббревиатуры, используемые в Rail Ecosystem"
+        chips={[{ label: `${glossary.length} терминов`, color: '#2563eb' }]}
       />
+    <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
 
       <div className="mb-4">
         <input
@@ -62,6 +65,7 @@ export default function GlossaryPage() {
           Термины не найдены по запросу «{search}»
         </div>
       )}
+    </div>
     </div>
   );
 }

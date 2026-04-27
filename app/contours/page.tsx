@@ -1,13 +1,20 @@
 import { contours, modules } from '@/data/railEcosystemContent';
-import SectionTitle from '@/components/SectionTitle';
+import PageHeader from '@/components/PageHeader';
 
 export default function ContoursPage() {
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
-      <SectionTitle
+    <div>
+      <PageHeader
+        icon="🛤"
         title="Операционные контуры Rail Ecosystem"
-        subtitle="Rail Ecosystem охватывает два производственных контура и единое цифровое ядро"
+        lead="Rail Ecosystem охватывает два производственных контура и единое цифровое ядро"
+        chips={[
+          { label: '3 контура', color: '#2563eb' },
+          { label: '14 модулей', color: '#7c3aed' },
+          { label: '2 MVP в работе', color: '#16a34a' },
+        ]}
       />
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
 
       <div className="space-y-8">
         {contours.map((contour) => {
@@ -92,6 +99,7 @@ export default function ContoursPage() {
           );
         })}
       </div>
+    </div>
     </div>
   );
 }

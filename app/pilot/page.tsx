@@ -1,5 +1,5 @@
 import { pilotInfo } from '@/data/railEcosystemContent';
-import SectionTitle from '@/components/SectionTitle';
+import PageHeader from '@/components/PageHeader';
 import PilotFlowChain from '@/components/PilotFlowChain';
 
 export default function PilotPage() {
@@ -8,13 +8,19 @@ export default function PilotPage() {
   const baseStations = pilot.stations.filter((s) => s.type === 'base');
 
   return (
+    <div>
+      <PageHeader
+        icon="🚀"
+        badge="Текущий этап"
+        title={pilot.title}
+        lead={pilot.goal}
+        chips={[
+          { label: `${pilotStations.length} пилотных станции`, color: '#2563eb' },
+          { label: '10 шагов маршрута', color: '#7c3aed' },
+          { label: `${pilot.successCriteria.length} критериев успеха`, color: '#16a34a' },
+        ]}
+      />
     <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
-      <div className="mb-2">
-        <span className="inline-block text-xs font-semibold bg-blue-600 text-white px-3 py-1 rounded-full mb-3">
-          Текущий этап — RailRoutes MVP
-        </span>
-      </div>
-      <SectionTitle title={pilot.title} subtitle={pilot.goal} />
 
       {/* Digital chain */}
       <div className="mb-10">
@@ -140,6 +146,7 @@ export default function PilotPage() {
           </ul>
         </div>
       </div>
+    </div>
     </div>
   );
 }

@@ -3,7 +3,7 @@
 import { useState, useMemo } from 'react';
 import { modules } from '@/data/railEcosystemContent';
 import ModuleCard from '@/components/ModuleCard';
-import SectionTitle from '@/components/SectionTitle';
+import PageHeader from '@/components/PageHeader';
 import type { MaturityStatus } from '@/types/railEcosystem';
 
 const statusOrder: MaturityStatus[] = [
@@ -68,11 +68,18 @@ export default function ModulesPage() {
   const isFiltering = search.trim() !== '' || statusFilter !== 'all';
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
-      <SectionTitle
+    <div>
+      <PageHeader
+        icon="📦"
         title="Модули Rail Ecosystem"
-        subtitle={`${modules.length} цифровых модулей, покрывающих все процессы железнодорожной эксплуатации`}
+        lead={`${modules.length} цифровых модулей, покрывающих все процессы железнодорожной эксплуатации`}
+        chips={[
+          { label: '2 MVP в работе', color: '#2563eb' },
+          { label: '4 ядра платформы', color: '#7c3aed' },
+          { label: `${modules.length} всего` },
+        ]}
       />
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
 
       {/* Search & filter */}
       <div className="flex flex-wrap gap-3 mb-4">
@@ -135,6 +142,7 @@ export default function ModulesPage() {
           Модули не найдены по запросу «{search}»
         </div>
       )}
+      </div>
     </div>
   );
 }
