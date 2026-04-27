@@ -5,16 +5,17 @@ import ModuleGrid from '@/components/ModuleGrid';
 import RoadmapSection from '@/components/RoadmapSection';
 import Link from 'next/link';
 import { openQuestions } from '@/data/railEcosystemContent';
+import { MapPin, Clock, CheckCircle, FileSpreadsheet, ClipboardCheck, BarChart3, ArrowRight, type LucideIcon } from 'lucide-react';
 
 // ─── What becomes visible ──────────────────────────────────────────────────────
 
-const visibilityItems = [
-  { icon: '📍', text: 'Кто куда поехал и что сделал — по каждому работнику' },
-  { icon: '⏱', text: 'Фактическое время работы на объекте — без ручного учёта' },
-  { icon: '✅', text: 'Реальный факт выезда подтверждён QR, а не подписью на бумаге' },
-  { icon: '📊', text: 'Excel-реестр поездок формируется автоматически для бухгалтерии' },
-  { icon: '📋', text: 'Цепочка согласования прозрачна — кто утвердил, когда, с какого устройства' },
-  { icon: '📈', text: 'Аналитика по дистанции: частота поездок, выполнение работ, нагрузка' },
+const visibilityItems: { Icon: LucideIcon; color: string; text: string }[] = [
+  { Icon: MapPin,        color: '#2563eb', text: 'Кто куда поехал и что сделал — по каждому работнику' },
+  { Icon: Clock,         color: '#7c3aed', text: 'Фактическое время работы на объекте — без ручного учёта' },
+  { Icon: CheckCircle,   color: '#16a34a', text: 'Реальный факт выезда подтверждён QR, а не подписью на бумаге' },
+  { Icon: FileSpreadsheet, color: '#0369a1', text: 'Excel-реестр поездок формируется автоматически для бухгалтерии' },
+  { Icon: ClipboardCheck, color: '#d97706', text: 'Цепочка согласования прозрачна — кто утвердил, когда, с какого устройства' },
+  { Icon: BarChart3,     color: '#16a34a', text: 'Аналитика по дистанции: частота поездок, выполнение работ, нагрузка' },
 ];
 
 function VisibilitySection() {
@@ -28,7 +29,9 @@ function VisibilitySection() {
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {visibilityItems.map((item, i) => (
             <div key={i} className="flex items-start gap-3 bg-slate-50 rounded-xl p-4 border border-slate-200 shadow-sm">
-              <span className="text-xl shrink-0">{item.icon}</span>
+              <span className="w-8 h-8 rounded-lg flex items-center justify-center shrink-0" style={{ background: item.color + '15' }}>
+                <item.Icon className="w-4 h-4" style={{ color: item.color }} />
+              </span>
               <p className="text-sm text-slate-700 leading-relaxed">{item.text}</p>
             </div>
           ))}
@@ -152,7 +155,8 @@ export default function HomePage() {
             href="/pilot"
             className="shrink-0 inline-flex items-center gap-2 px-5 py-2.5 bg-white text-blue-700 rounded-lg font-semibold text-sm hover:bg-blue-50 transition-colors shadow-lg shadow-blue-900/30"
           >
-            Детали пилота →
+            Детали пилота
+            <ArrowRight className="w-4 h-4" />
           </Link>
         </div>
       </section>
@@ -174,9 +178,7 @@ export default function HomePage() {
             className="inline-flex items-center gap-2 px-6 py-3 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-500 transition-colors shadow-lg shadow-blue-900/30"
           >
             Открыть карту
-            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6" />
-            </svg>
+            <ArrowRight className="w-4 h-4" />
           </Link>
         </div>
       </section>

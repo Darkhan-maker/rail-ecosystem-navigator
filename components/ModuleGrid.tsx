@@ -1,6 +1,7 @@
 import { modules } from '@/data/railEcosystemContent';
 import ModuleCard from '@/components/ModuleCard';
 import Link from 'next/link';
+import { ArrowRight } from 'lucide-react';
 
 interface ModuleGridProps {
   limit?: number;
@@ -19,7 +20,7 @@ export default function ModuleGrid({ limit, showDetails = false }: ModuleGridPro
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
           {displayed.map((mod) => (
-            <ModuleCard key={mod.id} module={mod} showDetails={showDetails} />
+            <ModuleCard key={mod.id} module={mod} detailed={showDetails} />
           ))}
         </div>
         {limit && modules.length > limit && (
@@ -28,7 +29,8 @@ export default function ModuleGrid({ limit, showDetails = false }: ModuleGridPro
               href="/modules"
               className="inline-flex items-center gap-2 px-5 py-2.5 border border-slate-300 rounded-lg text-sm font-medium text-slate-700 hover:bg-slate-50 hover:border-slate-400 transition-colors"
             >
-              Все {modules.length} модулей →
+              Все {modules.length} модулей
+              <ArrowRight className="w-4 h-4" />
             </Link>
           </div>
         )}

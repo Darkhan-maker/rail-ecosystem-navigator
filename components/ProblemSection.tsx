@@ -1,6 +1,17 @@
-const problems = [
+import { FileText, Clock, BarChart3, Network } from 'lucide-react';
+import type { LucideIcon } from 'lucide-react';
+
+const problems: {
+  Icon: LucideIcon;
+  title: string;
+  description: string;
+  service: string;
+  color: string;
+  lightBg: string;
+  borderColor: string;
+}[] = [
   {
-    icon: '📄',
+    Icon: FileText,
     title: 'Бумажные маршрутные листы',
     description: 'Работники ШЧ заполняют бумажные листы вручную. Нет контроля, нет данных, потери и ошибки.',
     service: 'ШЧ / НЖС',
@@ -9,7 +20,7 @@ const problems = [
     borderColor: '#fecaca',
   },
   {
-    icon: '⏱',
+    Icon: Clock,
     title: 'Ручной учёт рабочего времени',
     description: 'Учёт явки локомотивных бригад ведётся в таблицах. Нет связи с реальными рейсами.',
     service: 'Локомотивные бригады',
@@ -18,7 +29,7 @@ const problems = [
     borderColor: '#fcd34d',
   },
   {
-    icon: '📊',
+    Icon: BarChart3,
     title: 'Нет оперативной аналитики',
     description: 'Отчётность формируется вручную с задержкой. Данные по дистанциям не агрегированы.',
     service: 'Дирекция / ЦЖС',
@@ -27,7 +38,7 @@ const problems = [
     borderColor: '#fed7aa',
   },
   {
-    icon: '🔌',
+    Icon: Network,
     title: 'Разрозненные системы',
     description: 'Данные по поездкам, работам, ГТП и документам хранятся в разных местах без связи между собой.',
     service: 'Все уровни',
@@ -52,7 +63,12 @@ export default function ProblemSection() {
               className="rounded-xl p-5 flex flex-col gap-3 border"
               style={{ background: p.lightBg, borderColor: p.borderColor }}
             >
-              <div className="text-2xl">{p.icon}</div>
+              <div
+                className="w-9 h-9 rounded-lg flex items-center justify-center shrink-0"
+                style={{ background: p.color + '18', border: `1px solid ${p.color}28` }}
+              >
+                <p.Icon className="w-5 h-5" style={{ color: p.color }} />
+              </div>
               <div>
                 <div
                   className="text-[10px] font-bold uppercase tracking-widest mb-1"

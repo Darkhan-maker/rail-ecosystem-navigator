@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import { contours } from '@/data/railEcosystemContent';
+import { ArrowRight } from 'lucide-react';
 
 export default function ContourCards() {
   return (
@@ -67,7 +68,8 @@ export default function ContourCards() {
             href="/contours"
             className="inline-flex items-center gap-2 text-sm font-medium text-blue-600 hover:text-blue-700"
           >
-            Подробнее о контурах →
+            Подробнее о контурах
+            <ArrowRight className="w-3.5 h-3.5" />
           </Link>
         </div>
       </div>

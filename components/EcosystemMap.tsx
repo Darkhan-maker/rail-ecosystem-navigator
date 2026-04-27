@@ -17,20 +17,22 @@ import '@xyflow/react/dist/style.css';
 import { mapNodes, mapEdges, viewModeDescriptions } from '@/data/railEcosystemContent';
 import type { MapNodeData, MapNodeType, ViewMode } from '@/types/railEcosystem';
 import NodeDetailsPanel from '@/components/NodeDetailsPanel';
+import { NODE_TYPE_ICONS } from '@/components/icons';
+import { Package } from 'lucide-react';
 
 // ── Node visual config ────────────────────────────────────────────────────────
 
 const NODE_STYLE: Record<string, {
-  bg: string; border: string; text: string; icon: string; ring: string;
+  bg: string; border: string; text: string; ring: string;
   fw: string; fs: string; minW: number;
 }> = {
-  root:    { bg: '#1d4ed8', border: '#1e3a8a', text: '#fff',    icon: '⬡', ring: '#93c5fd', fw: '700', fs: '14px', minW: 200 },
-  contour: { bg: '#eef2ff', border: '#6366f1', text: '#1e1b4b', icon: '◈', ring: '#6366f1', fw: '700', fs: '12px', minW: 200 },
-  core:    { bg: '#f5f3ff', border: '#8b5cf6', text: '#2e1065', icon: '✦', ring: '#7c3aed', fw: '700', fs: '12px', minW: 190 },
-  org:     { bg: '#f8fafc', border: '#94a3b8', text: '#1e293b', icon: '▪', ring: '#64748b', fw: '500', fs: '12px', minW: 180 },
-  module:  { bg: '#eff6ff', border: '#3b82f6', text: '#1e3a8a', icon: '◉', ring: '#3b82f6', fw: '600', fs: '12px', minW: 175 },
-  process: { bg: '#fffbeb', border: '#f59e0b', text: '#78350f', icon: '⚙', ring: '#f59e0b', fw: '500', fs: '11px', minW: 180 },
-  problem: { bg: '#fff1f2', border: '#f87171', text: '#7f1d1d', icon: '⚠', ring: '#ef4444', fw: '500', fs: '11px', minW: 190 },
+  root:    { bg: '#1d4ed8', border: '#1e3a8a', text: '#fff',    ring: '#93c5fd', fw: '700', fs: '14px', minW: 200 },
+  contour: { bg: '#eef2ff', border: '#6366f1', text: '#1e1b4b', ring: '#6366f1', fw: '700', fs: '12px', minW: 200 },
+  core:    { bg: '#f5f3ff', border: '#8b5cf6', text: '#2e1065', ring: '#7c3aed', fw: '700', fs: '12px', minW: 190 },
+  org:     { bg: '#f8fafc', border: '#94a3b8', text: '#1e293b', ring: '#64748b', fw: '500', fs: '12px', minW: 180 },
+  module:  { bg: '#eff6ff', border: '#3b82f6', text: '#1e3a8a', ring: '#3b82f6', fw: '600', fs: '12px', minW: 175 },
+  process: { bg: '#fffbeb', border: '#f59e0b', text: '#78350f', ring: '#f59e0b', fw: '500', fs: '11px', minW: 180 },
+  problem: { bg: '#fff1f2', border: '#f87171', text: '#7f1d1d', ring: '#ef4444', fw: '500', fs: '11px', minW: 190 },
 };
 
 function RailNode({ data, selected }: { data: MapNodeData; selected?: boolean }) {
@@ -57,9 +59,7 @@ function RailNode({ data, selected }: { data: MapNodeData; selected?: boolean })
       }}
     >
       <div style={{ display: 'flex', alignItems: 'center', gap: 7 }}>
-        <span style={{ fontSize: isRoot ? 16 : 12, opacity: 0.6, color: s.text, flexShrink: 0 }}>
-          {s.icon}
-        </span>
+        {(() => { const NodeIcon = NODE_TYPE_ICONS[data.nodeType] ?? Package; return <NodeIcon style={{ width: isRoot ? 16 : 12, height: isRoot ? 16 : 12, opacity: 0.65, color: s.text, flexShrink: 0 }} />; })()}
         <div style={{ minWidth: 0 }}>
           <div style={{ fontSize: s.fs, fontWeight: s.fw, color: s.text, lineHeight: 1.35, wordBreak: 'break-word' }}>
             {data.label}

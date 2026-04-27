@@ -3,21 +3,24 @@
 import Link from 'next/link';
 import type { MapNodeData } from '@/types/railEcosystem';
 import { modules } from '@/data/railEcosystemContent';
+import { NODE_TYPE_ICONS, MODULE_ICONS } from '@/components/icons';
+import { Package } from 'lucide-react';
+import type { LucideIcon } from 'lucide-react';
 
 interface NodeDetailsPanelProps {
   node: { id: string; data: MapNodeData } | null;
   onClose: () => void;
 }
 
-const TYPE_META: Record<string, { label: string; icon: string; accent: string; bg: string }> = {
-  root:      { label: 'Корень',      icon: '⬡', accent: '#1d4ed8', bg: '#eff6ff' },
-  contour:   { label: 'Контур',      icon: '◈', accent: '#4f46e5', bg: '#eef2ff' },
-  core:      { label: 'Ядро',        icon: '✦', accent: '#7c3aed', bg: '#f5f3ff' },
-  org:       { label: 'Организация', icon: '▪', accent: '#475569', bg: '#f8fafc' },
-  module:    { label: 'Модуль',      icon: '◉', accent: '#2563eb', bg: '#eff6ff' },
-  submodule: { label: 'Подмодуль',   icon: '▸', accent: '#6b7280', bg: '#f9fafb' },
-  process:   { label: 'Процесс',     icon: '⚙', accent: '#d97706', bg: '#fffbeb' },
-  problem:   { label: 'Проблема',    icon: '⚠', accent: '#dc2626', bg: '#fff1f2' },
+const TYPE_META: Record<string, { label: string; accent: string; bg: string }> = {
+  root:      { label: 'Корень',      accent: '#1d4ed8', bg: '#eff6ff' },
+  contour:   { label: 'Контур',      accent: '#4f46e5', bg: '#eef2ff' },
+  core:      { label: 'Ядро',        accent: '#7c3aed', bg: '#f5f3ff' },
+  org:       { label: 'Организация', accent: '#475569', bg: '#f8fafc' },
+  module:    { label: 'Модуль',      accent: '#2563eb', bg: '#eff6ff' },
+  submodule: { label: 'Подмодуль',   accent: '#6b7280', bg: '#f9fafb' },
+  process:   { label: 'Процесс',     accent: '#d97706', bg: '#fffbeb' },
+  problem:   { label: 'Проблема',    accent: '#dc2626', bg: '#fff1f2' },
 };
 
 export default function NodeDetailsPanel({ node, onClose }: NodeDetailsPanelProps) {
@@ -25,6 +28,9 @@ export default function NodeDetailsPanel({ node, onClose }: NodeDetailsPanelProp
 
   const { data } = node;
   const meta = TYPE_META[data.nodeType] ?? TYPE_META.org;
+
+  const NodeIcon: LucideIcon = NODE_TYPE_ICONS[data.nodeType] ?? Package;
+
   const relatedModuleObjects = (data.relatedModules ?? [])
     .map(id => modules.find(m => m.id === id))
     .filter(Boolean);
@@ -32,14 +38,16 @@ export default function NodeDetailsPanel({ node, onClose }: NodeDetailsPanelProp
   return (
     <div className="absolute top-0 right-0 h-full w-72 bg-white border-l border-slate-200 shadow-xl z-10 overflow-y-auto flex flex-col">
       {/* Header */}
-      <div className="flex items-start justify-between px-4 py-3 border-b border-slate-100 shrink-0"
-        style={{ background: meta.bg }}>
-        <div className="flex items-center gap-2 min-w-0">
+      <div
+        className="flex items-start justify-between px-4 py-3 border-b border-slate-100 shrink-0"
+        style={{ background: meta.bg }}
+      >
+        <div className="flex items-center gap-2.5 min-w-0">
           <span
-            className="w-7 h-7 rounded-lg flex items-center justify-center text-sm shrink-0"
+            className="w-7 h-7 rounded-lg flex items-center justify-center shrink-0"
             style={{ background: meta.accent + '18', color: meta.accent }}
           >
-            {meta.icon}
+            <NodeIcon className="w-3.5 h-3.5" />
           </span>
           <div className="min-w-0">
             <div className="text-[10px] font-semibold uppercase tracking-wider" style={{ color: meta.accent }}>
@@ -77,7 +85,7 @@ export default function NodeDetailsPanel({ node, onClose }: NodeDetailsPanelProp
           <Section label="Входные данные">
             <div className="flex flex-wrap gap-1.5">
               {data.inputData.map(d => (
-                <span key={d} className="inline-flex items-center gap-1 text-[11px] bg-blue-50 text-blue-700 border border-blue-100 px-2 py-0.5 rounded-full">
+                <span key={d} className="text-[11px] bg-blue-50 text-blue-700 border border-blue-100 px-2 py-0.5 rounded-full">
                   {d}
                 </span>
               ))}
@@ -89,7 +97,7 @@ export default function NodeDetailsPanel({ node, onClose }: NodeDetailsPanelProp
           <Section label="Выходные данные">
             <div className="flex flex-wrap gap-1.5">
               {data.outputData.map(d => (
-                <span key={d} className="inline-flex items-center gap-1 text-[11px] bg-emerald-50 text-emerald-700 border border-emerald-100 px-2 py-0.5 rounded-full">
+                <span key={d} className="text-[11px] bg-emerald-50 text-emerald-700 border border-emerald-100 px-2 py-0.5 rounded-full">
                   {d}
                 </span>
               ))}
@@ -100,19 +108,23 @@ export default function NodeDetailsPanel({ node, onClose }: NodeDetailsPanelProp
         {relatedModuleObjects.length > 0 && (
           <Section label="Связанные модули">
             <div className="space-y-1.5">
-              {relatedModuleObjects.map(m => m && (
-                <Link
-                  key={m.id}
-                  href={`/modules#${m.id}`}
-                  className="flex items-center gap-2 px-3 py-2 rounded-lg border border-slate-100 bg-slate-50 hover:border-blue-200 hover:bg-blue-50 transition-colors group"
-                >
-                  <span className="text-blue-500 shrink-0 text-xs group-hover:text-blue-600">◉</span>
-                  <div className="min-w-0">
-                    <div className="text-xs font-semibold text-slate-800 group-hover:text-blue-700 truncate">{m.name}</div>
-                    <div className="text-[10px] text-slate-400 truncate">{m.russianName}</div>
-                  </div>
-                </Link>
-              ))}
+              {relatedModuleObjects.map(m => {
+                if (!m) return null;
+                const MIcon = MODULE_ICONS[m.id] ?? Package;
+                return (
+                  <Link
+                    key={m.id}
+                    href={`/modules#${m.id}`}
+                    className="flex items-center gap-2 px-3 py-2 rounded-lg border border-slate-100 bg-slate-50 hover:border-blue-200 hover:bg-blue-50 transition-colors group"
+                  >
+                    <MIcon className="w-3 h-3 text-blue-400 shrink-0 group-hover:text-blue-600" />
+                    <div className="min-w-0">
+                      <div className="text-xs font-semibold text-slate-800 group-hover:text-blue-700 truncate">{m.name}</div>
+                      <div className="text-[10px] text-slate-400 truncate">{m.russianName}</div>
+                    </div>
+                  </Link>
+                );
+              })}
             </div>
           </Section>
         )}

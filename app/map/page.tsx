@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { contours, modules, mapNodes } from '@/data/railEcosystemContent';
 import type { Module } from '@/types/railEcosystem';
+import { Route, Container, Cpu, Info, type LucideIcon } from 'lucide-react';
 
 // ─── Types ─────────────────────────────────────────────────────────────────────
 
@@ -273,7 +274,9 @@ function InspectorPanel({
   if (!selected) {
     return (
       <div className="w-72 shrink-0 bg-white border-l border-slate-200 flex flex-col items-center justify-center gap-3 p-6 text-center">
-        <div className="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center text-lg">◉</div>
+        <div className="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center">
+          <Info className="w-5 h-5 text-slate-400" />
+        </div>
         <p className="text-xs text-slate-400 leading-relaxed">
           Выберите элемент в левом дереве или кликните на карточку в центре
         </p>
@@ -402,10 +405,10 @@ function InspectorPanel({
 // ─── Tab: Overview ─────────────────────────────────────────────────────────────
 
 function OverviewTab({ onSelect }: { onSelect: (item: SelectedItem) => void }) {
-  const contourMeta = [
-    { color: '#2563eb', icon: '🛤', orgs: ['КТЖ', 'Дирекция', 'ЦЖС', 'НЖС', 'ПЧ / ШЧ / ЭЧ'], tag: 'Магистральная сеть' },
-    { color: '#16a34a', icon: '🚂', orgs: ['КТЖ', 'ТОО КТЖ-ГП', 'Депо', 'Локомотивные бригады'], tag: 'Грузовые перевозки' },
-    { color: '#7c3aed', icon: '⬡',  orgs: ['RailData Hub', 'RailAI', 'RailAnalytics', 'Reporting', 'Notifications'], tag: 'Цифровое ядро' },
+  const contourMeta: { color: string; Icon: LucideIcon; orgs: string[]; tag: string }[] = [
+    { color: '#2563eb', Icon: Route,     orgs: ['КТЖ', 'Дирекция', 'ЦЖС', 'НЖС', 'ПЧ / ШЧ / ЭЧ'], tag: 'Магистральная сеть' },
+    { color: '#16a34a', Icon: Container, orgs: ['КТЖ', 'ТОО КТЖ-ГП', 'Депо', 'Локомотивные бригады'], tag: 'Грузовые перевозки' },
+    { color: '#7c3aed', Icon: Cpu,       orgs: ['RailData Hub', 'RailAI', 'RailAnalytics', 'Reporting', 'Notifications'], tag: 'Цифровое ядро' },
   ];
 
   return (
@@ -430,7 +433,7 @@ function OverviewTab({ onSelect }: { onSelect: (item: SelectedItem) => void }) {
               style={{ borderColor: c.color + '30' }}
             >
               <div className="px-4 py-3" style={{ background: c.color + '12' }}>
-                <div className="text-lg mb-1">{meta.icon}</div>
+                <div className="mb-1.5" style={{ color: c.color }}><meta.Icon className="w-5 h-5" /></div>
                 <div className="text-sm font-bold leading-snug" style={{ color: c.color }}>{c.name}</div>
               </div>
               <div className="px-4 py-3 bg-white">
