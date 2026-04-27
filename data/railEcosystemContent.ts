@@ -388,11 +388,11 @@ export const mapNodes: Node<MapNodeData>[] = [
       description: 'Машинисты и помощники машинистов, выполняющие рейсы.',
     },
   },
-  // Modules
+  // Modules — Magistral operational (left side, under shch/nzjs)
   {
     id: 'mod-railroutes',
     type: 'railNode',
-    position: { x: 280, y: 1060 },
+    position: { x: -150, y: 1080 },
     data: {
       label: 'RailRoutes',
       nodeType: 'module' as MapNodeType,
@@ -403,7 +403,7 @@ export const mapNodes: Node<MapNodeData>[] = [
   {
     id: 'mod-railwork',
     type: 'railNode',
-    position: { x: 460, y: 1060 },
+    position: { x: 40, y: 1080 },
     data: {
       label: 'RailWork',
       nodeType: 'module' as MapNodeType,
@@ -414,7 +414,7 @@ export const mapNodes: Node<MapNodeData>[] = [
   {
     id: 'mod-raildocs',
     type: 'railNode',
-    position: { x: 640, y: 1060 },
+    position: { x: 230, y: 1080 },
     data: {
       label: 'RailDocs',
       nodeType: 'module' as MapNodeType,
@@ -425,7 +425,7 @@ export const mapNodes: Node<MapNodeData>[] = [
   {
     id: 'mod-railsafety',
     type: 'railNode',
-    position: { x: 820, y: 1060 },
+    position: { x: 40, y: 1230 },
     data: {
       label: 'RailSafety',
       nodeType: 'module' as MapNodeType,
@@ -436,7 +436,7 @@ export const mapNodes: Node<MapNodeData>[] = [
   {
     id: 'mod-railcrew',
     type: 'railNode',
-    position: { x: 1000, y: 1060 },
+    position: { x: 1060, y: 900 },
     data: {
       label: 'RailCrew',
       nodeType: 'module' as MapNodeType,
@@ -447,7 +447,7 @@ export const mapNodes: Node<MapNodeData>[] = [
   {
     id: 'mod-railtime',
     type: 'railNode',
-    position: { x: 280, y: 1200 },
+    position: { x: 1250, y: 900 },
     data: {
       label: 'RailTime',
       nodeType: 'module' as MapNodeType,
@@ -458,7 +458,7 @@ export const mapNodes: Node<MapNodeData>[] = [
   {
     id: 'mod-railanalytics',
     type: 'railNode',
-    position: { x: 460, y: 1200 },
+    position: { x: 460, y: 400 },
     data: {
       label: 'RailAnalytics',
       nodeType: 'module' as MapNodeType,
@@ -469,7 +469,7 @@ export const mapNodes: Node<MapNodeData>[] = [
   {
     id: 'mod-railai',
     type: 'railNode',
-    position: { x: 640, y: 1200 },
+    position: { x: 650, y: 400 },
     data: {
       label: 'RailAI Core',
       nodeType: 'module' as MapNodeType,
@@ -480,7 +480,7 @@ export const mapNodes: Node<MapNodeData>[] = [
   {
     id: 'mod-raildatahub',
     type: 'railNode',
-    position: { x: 820, y: 1200 },
+    position: { x: 840, y: 400 },
     data: {
       label: 'RailData Hub',
       nodeType: 'module' as MapNodeType,
@@ -491,7 +491,7 @@ export const mapNodes: Node<MapNodeData>[] = [
   {
     id: 'mod-reporting',
     type: 'railNode',
-    position: { x: 1000, y: 1200 },
+    position: { x: 480, y: 560 },
     data: {
       label: 'Reporting Layer',
       nodeType: 'module' as MapNodeType,
@@ -502,7 +502,7 @@ export const mapNodes: Node<MapNodeData>[] = [
   {
     id: 'mod-notifications',
     type: 'railNode',
-    position: { x: 280, y: 1340 },
+    position: { x: 650, y: 560 },
     data: {
       label: 'Notification Engine',
       nodeType: 'module' as MapNodeType,
@@ -513,7 +513,7 @@ export const mapNodes: Node<MapNodeData>[] = [
   {
     id: 'mod-usermgmt',
     type: 'railNode',
-    position: { x: 460, y: 1340 },
+    position: { x: 820, y: 560 },
     data: {
       label: 'User & Role Management',
       nodeType: 'module' as MapNodeType,
@@ -524,7 +524,7 @@ export const mapNodes: Node<MapNodeData>[] = [
   {
     id: 'mod-railcargo',
     type: 'railNode',
-    position: { x: 1180, y: 1060 },
+    position: { x: 1155, y: 1060 },
     data: {
       label: 'RailCargo',
       nodeType: 'module' as MapNodeType,
@@ -535,7 +535,7 @@ export const mapNodes: Node<MapNodeData>[] = [
   {
     id: 'mod-integration',
     type: 'railNode',
-    position: { x: 640, y: 1480 },
+    position: { x: 650, y: 720 },
     data: {
       label: 'Integration Layer',
       nodeType: 'module' as MapNodeType,
@@ -547,7 +547,7 @@ export const mapNodes: Node<MapNodeData>[] = [
   {
     id: 'proc-trip',
     type: 'railNode',
-    position: { x: 100, y: 1700 },
+    position: { x: -150, y: 1440 },
     data: {
       label: 'Служебная поездка',
       nodeType: 'process' as MapNodeType,
@@ -557,7 +557,7 @@ export const mapNodes: Node<MapNodeData>[] = [
   {
     id: 'proc-route-sheet',
     type: 'railNode',
-    position: { x: 350, y: 1700 },
+    position: { x: 40, y: 1440 },
     data: {
       label: 'Маршрутный лист',
       nodeType: 'process' as MapNodeType,
@@ -567,7 +567,7 @@ export const mapNodes: Node<MapNodeData>[] = [
   {
     id: 'proc-qr-arrive',
     type: 'railNode',
-    position: { x: 600, y: 1700 },
+    position: { x: 230, y: 1440 },
     data: {
       label: 'QR-прибытие',
       nodeType: 'process' as MapNodeType,
@@ -577,7 +577,7 @@ export const mapNodes: Node<MapNodeData>[] = [
   {
     id: 'proc-work',
     type: 'railNode',
-    position: { x: 100, y: 1870 },
+    position: { x: -150, y: 1590 },
     data: {
       label: 'Выполнение работы',
       nodeType: 'process' as MapNodeType,
@@ -587,7 +587,7 @@ export const mapNodes: Node<MapNodeData>[] = [
   {
     id: 'proc-qr-depart',
     type: 'railNode',
-    position: { x: 350, y: 1870 },
+    position: { x: 40, y: 1590 },
     data: {
       label: 'QR-убытие',
       nodeType: 'process' as MapNodeType,
@@ -597,7 +597,7 @@ export const mapNodes: Node<MapNodeData>[] = [
   {
     id: 'proc-approve',
     type: 'railNode',
-    position: { x: 600, y: 1870 },
+    position: { x: 230, y: 1590 },
     data: {
       label: 'Утверждение',
       nodeType: 'process' as MapNodeType,
@@ -607,7 +607,7 @@ export const mapNodes: Node<MapNodeData>[] = [
   {
     id: 'proc-excel',
     type: 'railNode',
-    position: { x: 850, y: 1700 },
+    position: { x: 420, y: 1440 },
     data: {
       label: 'Excel-реестр',
       nodeType: 'process' as MapNodeType,
@@ -617,7 +617,7 @@ export const mapNodes: Node<MapNodeData>[] = [
   {
     id: 'proc-analytics',
     type: 'railNode',
-    position: { x: 850, y: 1870 },
+    position: { x: 420, y: 1590 },
     data: {
       label: 'Аналитика',
       nodeType: 'process' as MapNodeType,
@@ -627,7 +627,7 @@ export const mapNodes: Node<MapNodeData>[] = [
   {
     id: 'proc-crew-cycle',
     type: 'railNode',
-    position: { x: 1100, y: 1780 },
+    position: { x: 1155, y: 1230 },
     data: {
       label: 'Цикл бригады',
       nodeType: 'process' as MapNodeType,
@@ -638,7 +638,7 @@ export const mapNodes: Node<MapNodeData>[] = [
   {
     id: 'prob-paper-routes',
     type: 'railNode',
-    position: { x: 100, y: 2100 },
+    position: { x: -300, y: 1800 },
     data: {
       label: 'Бумажные маршрутные листы',
       nodeType: 'problem' as MapNodeType,
@@ -648,7 +648,7 @@ export const mapNodes: Node<MapNodeData>[] = [
   {
     id: 'prob-manual-journals',
     type: 'railNode',
-    position: { x: 400, y: 2100 },
+    position: { x: -60, y: 1800 },
     data: {
       label: 'Ручные журналы',
       nodeType: 'problem' as MapNodeType,
@@ -658,7 +658,7 @@ export const mapNodes: Node<MapNodeData>[] = [
   {
     id: 'prob-fake-trips',
     type: 'railNode',
-    position: { x: 100, y: 2270 },
+    position: { x: -300, y: 1960 },
     data: {
       label: 'Фиктивные поездки',
       nodeType: 'problem' as MapNodeType,
@@ -668,7 +668,7 @@ export const mapNodes: Node<MapNodeData>[] = [
   {
     id: 'prob-no-digital-trail',
     type: 'railNode',
-    position: { x: 400, y: 2270 },
+    position: { x: -60, y: 1960 },
     data: {
       label: 'Нет цифрового следа',
       nodeType: 'problem' as MapNodeType,
@@ -678,7 +678,7 @@ export const mapNodes: Node<MapNodeData>[] = [
   {
     id: 'prob-scattered-excel',
     type: 'railNode',
-    position: { x: 700, y: 2100 },
+    position: { x: 160, y: 1800 },
     data: {
       label: 'Разрозненные Excel-файлы',
       nodeType: 'problem' as MapNodeType,
@@ -688,7 +688,7 @@ export const mapNodes: Node<MapNodeData>[] = [
   {
     id: 'prob-weak-analytics',
     type: 'railNode',
-    position: { x: 700, y: 2270 },
+    position: { x: 160, y: 1960 },
     data: {
       label: 'Слабая аналитика',
       nodeType: 'problem' as MapNodeType,
@@ -698,7 +698,7 @@ export const mapNodes: Node<MapNodeData>[] = [
   {
     id: 'prob-gtp-disconnect',
     type: 'railNode',
-    position: { x: 1000, y: 2100 },
+    position: { x: 380, y: 1800 },
     data: {
       label: 'Разрыв ГТП и выезда',
       nodeType: 'problem' as MapNodeType,

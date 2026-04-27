@@ -28,6 +28,17 @@ const statusLabels: Record<MaturityStatus, string> = {
   'strategic-stage':'Strategic — Стратегический',
 };
 
+const statusAccent: Record<MaturityStatus, string> = {
+  'mvp-priority':   'text-blue-600 border-blue-200',
+  'mvp-support':    'text-blue-500 border-blue-100',
+  'core-stage':     'text-emerald-600 border-emerald-200',
+  'next-stage':     'text-indigo-600 border-indigo-200',
+  'future-stage':   'text-slate-500 border-slate-200',
+  'parallel-stage': 'text-orange-600 border-orange-200',
+  'planned-stage':  'text-amber-600 border-amber-200',
+  'strategic-stage':'text-violet-600 border-violet-200',
+};
+
 export default function ModulesPage() {
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState<MaturityStatus | 'all'>('all');
@@ -49,6 +60,7 @@ export default function ModulesPage() {
     .map((status) => ({
       status,
       label: statusLabels[status],
+      accent: statusAccent[status],
       items: filtered.filter((m) => m.status === status),
     }))
     .filter((g) => g.items.length > 0);
@@ -69,24 +81,22 @@ export default function ModulesPage() {
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           placeholder="Поиск по названию или описанию..."
-          className="flex-1 min-w-56 border border-gray-200 rounded-lg px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          className="flex-1 min-w-56 border border-slate-200 rounded-xl px-4 py-2.5 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent shadow-sm"
         />
         <select
           value={statusFilter}
           onChange={(e) => setStatusFilter(e.target.value as MaturityStatus | 'all')}
-          className="border border-gray-200 rounded-lg px-3 py-2 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"
+          className="border border-slate-200 rounded-xl px-3 py-2 text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white shadow-sm"
         >
           <option value="all">Все статусы</option>
           {statusOrder.map((s) => (
-            <option key={s} value={s}>
-              {statusLabels[s]}
-            </option>
+            <option key={s} value={s}>{statusLabels[s]}</option>
           ))}
         </select>
         {isFiltering && (
           <button
             onClick={() => { setSearch(''); setStatusFilter('all'); }}
-            className="px-3 py-2 text-sm text-gray-500 hover:text-gray-700 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
+            className="px-3 py-2 text-sm text-slate-500 hover:text-slate-700 border border-slate-200 rounded-xl hover:bg-slate-50 transition-colors bg-white shadow-sm"
           >
             Сбросить
           </button>
@@ -94,7 +104,7 @@ export default function ModulesPage() {
       </div>
 
       {/* Results count */}
-      <div className="text-xs text-gray-400 mb-8">
+      <div className="text-xs text-slate-400 mb-8">
         {isFiltering
           ? `Найдено: ${filtered.length} из ${modules.length} модулей`
           : `${modules.length} модулей · сгруппированы по этапам зрелости`}
@@ -102,11 +112,14 @@ export default function ModulesPage() {
 
       {grouped.length > 0 ? (
         <div className="space-y-10">
-          {grouped.map(({ status, label, items }) => (
+          {grouped.map(({ status, label, accent, items }) => (
             <div key={status}>
-              <h2 className="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-4 border-b border-gray-100 pb-2">
-                {label}
-              </h2>
+              <div className={`flex items-center gap-3 mb-4 pb-2 border-b ${accent.split(' ')[1]}`}>
+                <h2 className={`text-xs font-bold uppercase tracking-widest ${accent.split(' ')[0]}`}>
+                  {label}
+                </h2>
+                <span className="text-xs text-slate-400">{items.length} модулей</span>
+              </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
                 {items.map((mod) => (
                   <div key={mod.id} id={mod.id}>
@@ -118,7 +131,7 @@ export default function ModulesPage() {
           ))}
         </div>
       ) : (
-        <div className="text-center py-16 text-gray-400 text-sm">
+        <div className="text-center py-16 text-slate-400 text-sm bg-white rounded-xl border border-slate-200 shadow-sm">
           Модули не найдены по запросу «{search}»
         </div>
       )}

@@ -8,8 +8,8 @@ interface SectionTitleProps {
 export default function SectionTitle({ title, subtitle, centered = false, className = '' }: SectionTitleProps) {
   return (
     <div className={`mb-10 ${centered ? 'text-center' : ''} ${className}`}>
-      <h2 className="text-2xl font-bold text-gray-900 tracking-tight">{title}</h2>
-      {subtitle && <p className="mt-2 text-base text-gray-500 max-w-2xl">{subtitle}</p>}
+      <h1 className="text-2xl font-bold text-slate-900 tracking-tight">{title}</h1>
+      {subtitle && <p className="mt-2 text-base text-slate-500 max-w-2xl">{subtitle}</p>}
     </div>
   );
 }

@@ -31,11 +31,11 @@ export default function GlossaryPage() {
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           placeholder="Поиск по аббревиатуре или расшифровке..."
-          className="w-full border border-gray-200 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          className="w-full border border-slate-200 rounded-xl px-4 py-2.5 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent shadow-sm"
         />
       </div>
 
-      <div className="text-xs text-gray-400 mb-6">
+      <div className="text-xs text-slate-400 mb-6">
         {filtered.length === glossary.length
           ? `${glossary.length} терминов`
           : `${filtered.length} из ${glossary.length} терминов`}
@@ -47,18 +47,18 @@ export default function GlossaryPage() {
             <div
               key={item.abbreviation}
               id={item.abbreviation}
-              className="border border-gray-200 rounded-lg p-4 hover:border-blue-200 transition-colors"
+              className="bg-white border border-slate-200 rounded-xl p-4 shadow-sm hover:border-blue-300 hover:shadow-md transition-all duration-150"
             >
-              <div className="text-xl font-bold text-blue-600 mb-1">{item.abbreviation}</div>
-              <div className="text-sm text-gray-800 font-medium">{item.fullForm}</div>
+              <div className="text-xl font-bold text-blue-600 mb-1 leading-tight">{item.abbreviation}</div>
+              <div className="text-sm text-slate-800 font-medium leading-snug">{item.fullForm}</div>
               {item.note && (
-                <div className="text-xs text-amber-600 mt-1 italic">{item.note}</div>
+                <div className="text-xs text-amber-600 mt-1.5 italic leading-relaxed">{item.note}</div>
               )}
             </div>
           ))}
         </div>
       ) : (
-        <div className="text-center py-16 text-gray-400 text-sm">
+        <div className="text-center py-16 text-slate-400 text-sm bg-white rounded-xl border border-slate-200 shadow-sm">
           Термины не найдены по запросу «{search}»
         </div>
       )}

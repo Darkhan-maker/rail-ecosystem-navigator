@@ -10,7 +10,7 @@ export default function ScenariosPage() {
         subtitle="Ключевые пользовательские сценарии Rail Ecosystem — от начала до результата"
       />
 
-      <div className="space-y-10">
+      <div className="space-y-8">
         {scenarios.map((scenario) => (
           <ScenarioTimeline key={scenario.id} scenario={scenario} />
         ))}
