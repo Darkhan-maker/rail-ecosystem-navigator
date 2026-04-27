@@ -30,7 +30,7 @@ export default function NodeDetailsPanel({ node, onClose }: NodeDetailsPanelProp
     .filter(Boolean);
 
   return (
-    <div className="absolute top-0 right-0 h-full w-80 bg-white border-l border-slate-200 shadow-xl z-10 overflow-y-auto flex flex-col">
+    <div className="absolute top-0 right-0 h-full w-72 bg-white border-l border-slate-200 shadow-xl z-10 overflow-y-auto flex flex-col">
       {/* Header */}
       <div className="flex items-start justify-between px-4 py-3 border-b border-slate-100 shrink-0"
         style={{ background: meta.bg }}>

@@ -11,32 +11,52 @@ const steps = [
   { number: 10, name: 'Аналитика',    desc: 'Данные — в дашборды по дистанции и выполнению работ' },
 ];
 
+const row1 = steps.slice(0, 5);
+const row2 = steps.slice(5, 10);
+
+function StepCard({ step, showArrow }: { step: typeof steps[0]; showArrow: boolean }) {
+  return (
+    <div className="flex items-center gap-1.5 flex-1 min-w-0">
+      <div className="flex flex-col items-center text-center flex-1 min-w-0">
+        <div className="w-9 h-9 rounded-full bg-blue-600 text-white flex items-center justify-center text-sm font-bold shrink-0 mb-2 shadow-sm">
+          {step.number}
+        </div>
+        <div className="text-xs font-semibold text-slate-800 leading-tight mb-1">{step.name}</div>
+        <div className="text-xs text-slate-500 leading-snug">{step.desc}</div>
+      </div>
+      {showArrow && (
+        <svg className="w-4 h-4 text-blue-300 shrink-0 mt-[-18px]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+          <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+        </svg>
+      )}
+    </div>
+  );
+}
+
 export default function PilotFlowChain() {
   return (
     <div>
-      {/* Desktop: horizontal scroll with arrows */}
-      <div className="hidden md:flex items-start gap-0 overflow-x-auto pb-2">
-        {steps.map((step, i) => (
-          <div key={step.number} className="flex items-start shrink-0">
-            <div className="flex flex-col items-center w-28">
-              <div className="w-9 h-9 rounded-full bg-blue-600 text-white flex items-center justify-center text-sm font-bold shrink-0 mb-2 shadow-sm">
-                {step.number}
-              </div>
-              <div className="text-xs font-semibold text-slate-800 text-center leading-tight mb-1">{step.name}</div>
-              <div className="text-xs text-slate-500 text-center leading-snug">{step.desc}</div>
-            </div>
-            {i < steps.length - 1 && (
-              <div className="flex items-start pt-4 px-1 shrink-0">
-                <svg className="w-5 h-5 text-blue-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
-                </svg>
-              </div>
-            )}
+      {/* Desktop: 2 rows of 5 steps — no horizontal scroll */}
+      <div className="hidden md:block space-y-6">
+        {[row1, row2].map((row, rowIdx) => (
+          <div key={rowIdx} className="flex items-start gap-0">
+            {row.map((step, i) => (
+              <StepCard
+                key={step.number}
+                step={step}
+                showArrow={i < row.length - 1}
+              />
+            ))}
           </div>
         ))}
+        <div className="flex items-center gap-2 pt-1">
+          <div className="h-px flex-1 bg-slate-200" />
+          <span className="text-xs text-slate-400 shrink-0">шаги 1–5 → шаги 6–10</span>
+          <div className="h-px flex-1 bg-slate-200" />
+        </div>
       </div>
 
-      {/* Mobile: vertical list */}
+      {/* Mobile/tablet: vertical list */}
       <div className="md:hidden space-y-3">
         {steps.map((step, i) => (
           <div key={step.number} className="flex gap-3">
@@ -48,7 +68,7 @@ export default function PilotFlowChain() {
             </div>
             <div className="pb-3">
               <div className="text-sm font-semibold text-slate-800">{step.name}</div>
-              <div className="text-xs text-slate-500 mt-0.5">{step.desc}</div>
+              <div className="text-xs text-slate-500 mt-0.5 leading-snug">{step.desc}</div>
             </div>
           </div>
         ))}
