@@ -1,410 +1,463 @@
 'use client';
 
-import { useState, useMemo, useRef, useEffect } from 'react';
-import { modules } from '@/data/railEcosystemContent';
-import ModuleCard from '@/components/ModuleCard';
-import {
-  STATUS_STYLE,
-  Rocket,
-  Layers,
-  Cpu,
-  Workflow,
-  Milestone,
-  GitBranch,
-  Route,
-  BrainCircuit,
-  type LucideIcon,
-} from '@/components/icons';
-import { Search, X, AlignJustify, LayoutGrid, ChevronDown } from 'lucide-react';
-import type { MaturityStatus } from '@/types/railEcosystem';
+import { useState, useMemo } from 'react';
+import { Search, X, ChevronDown, ChevronUp } from 'lucide-react';
+import { modules, contours } from '@/data/railEcosystemContent';
+import { MODULE_ICONS } from '@/components/icons';
+import type { MaturityStatus, Module } from '@/types/railEcosystem';
 
-// ── Status ordering & labels ──────────────────────────────────────────────────
+// ─── Design tokens ─────────────────────────────────────────────────────────────
 
-const statusOrder: MaturityStatus[] = [
-  'mvp-priority',
-  'mvp-support',
-  'core-stage',
-  'next-stage',
-  'future-stage',
-  'parallel-stage',
-  'planned-stage',
-  'strategic-stage',
+const C = {
+  bg:     '#080d1a',
+  card:   '#0c1424',
+  border: '#1a2535',
+  text:   '#e2e8f0',
+  muted:  '#7a90a8',
+  dim:    '#4a6080',
+};
+
+// ─── Contour color per module (first-match from contours order) ────────────────
+
+const MODULE_CONTOUR_COLOR: Record<string, string> = {};
+for (const c of contours) {
+  for (const id of c.modules) {
+    if (!MODULE_CONTOUR_COLOR[id]) MODULE_CONTOUR_COLOR[id] = c.color;
+  }
+}
+
+// ─── Status badge config (dark-theme) ─────────────────────────────────────────
+
+const BADGE: Record<MaturityStatus, { label: string; bg: string; text: string; border: string }> = {
+  'mvp-priority':   { label: 'MVP',        bg: 'rgba(22,163,74,0.2)',    text: '#86efac', border: 'rgba(22,163,74,0.4)'    },
+  'mvp-support':    { label: 'MVP',        bg: 'rgba(22,163,74,0.15)',   text: '#86efac', border: 'rgba(22,163,74,0.3)'    },
+  'core-stage':     { label: 'Ядро',       bg: 'rgba(124,58,237,0.18)',  text: '#c4b5fd', border: 'rgba(124,58,237,0.4)'  },
+  'next-stage':     { label: 'Следующий',  bg: 'rgba(37,99,235,0.18)',   text: '#93c5fd', border: 'rgba(37,99,235,0.4)'   },
+  'future-stage':   { label: 'Будущий',    bg: 'rgba(100,116,139,0.12)', text: '#94a3b8', border: 'rgba(100,116,139,0.3)' },
+  'parallel-stage': { label: 'Будущий',    bg: 'rgba(100,116,139,0.12)', text: '#94a3b8', border: 'rgba(100,116,139,0.3)' },
+  'planned-stage':  { label: 'Будущий',    bg: 'rgba(100,116,139,0.12)', text: '#94a3b8', border: 'rgba(100,116,139,0.3)' },
+  'strategic-stage':{ label: 'Стратег.',   bg: 'rgba(217,119,6,0.15)',   text: '#fbbf24', border: 'rgba(217,119,6,0.4)'   },
+};
+
+// ─── Filter tabs ───────────────────────────────────────────────────────────────
+
+type FilterTab = 'all' | 'mvp' | 'core' | 'next' | 'future';
+
+const TABS: { id: FilterTab; label: string; color: string; activeBg: string; activeBorder: string }[] = [
+  { id: 'all',    label: 'Все',       color: '#e2e8f0', activeBg: 'rgba(71,85,105,0.4)',   activeBorder: 'rgba(71,85,105,0.6)'   },
+  { id: 'mvp',    label: 'MVP',       color: '#86efac', activeBg: 'rgba(22,163,74,0.25)',  activeBorder: 'rgba(22,163,74,0.5)'   },
+  { id: 'core',   label: 'Ядро',      color: '#c4b5fd', activeBg: 'rgba(124,58,237,0.25)', activeBorder: 'rgba(124,58,237,0.5)' },
+  { id: 'next',   label: 'Следующие', color: '#93c5fd', activeBg: 'rgba(37,99,235,0.25)',  activeBorder: 'rgba(37,99,235,0.5)'  },
+  { id: 'future', label: 'Будущие',   color: '#fbbf24', activeBg: 'rgba(217,119,6,0.25)',  activeBorder: 'rgba(217,119,6,0.5)'  },
 ];
 
-const statusLabels: Record<MaturityStatus, string> = {
-  'mvp-priority':   'MVP — Первый этап',
-  'mvp-support':    'MVP — Поддержка',
-  'core-stage':     'Core — Ядро платформы',
-  'next-stage':     'Next — Следующий этап',
-  'future-stage':   'Future — Будущий этап',
-  'parallel-stage': 'Parallel — Параллельный',
-  'planned-stage':  'Planned — Запланировано',
-  'strategic-stage':'Strategic — Стратегический',
-};
-
-const STATUS_META: Record<MaturityStatus, { Icon: LucideIcon; description: string }> = {
-  'mvp-priority':   { Icon: Rocket,       description: 'Разрабатывается в первую очередь — текущий пилот RailRoutes' },
-  'mvp-support':    { Icon: Layers,       description: 'Поддерживающие MVP-модули, запускаемые параллельно с пилотом' },
-  'core-stage':     { Icon: Cpu,          description: 'Фундаментальные модули — горизонтальное цифровое ядро платформы' },
-  'next-stage':     { Icon: Workflow,     description: 'Следующий приоритет после успешного завершения первого пилота' },
-  'future-stage':   { Icon: Milestone,    description: 'Дальнейшее развитие платформы после утверждения следующего этапа' },
-  'parallel-stage': { Icon: GitBranch,    description: 'Разрабатывается параллельно основным этапам дорожной карты' },
-  'planned-stage':  { Icon: Route,        description: 'Включено в дорожную карту без жёстких сроков запуска' },
-  'strategic-stage':{ Icon: BrainCircuit, description: 'Долгосрочное стратегическое направление — ИИ и предиктивная аналитика' },
-};
-
-// ── Hero metrics ──────────────────────────────────────────────────────────────
-
-const mvpCount       = modules.filter(m => m.status === 'mvp-priority' || m.status === 'mvp-support').length;
-const coreCount      = modules.filter(m => m.status === 'core-stage').length;
-const strategicCount = modules.filter(m => m.status === 'strategic-stage').length;
-
-// ── Group header border colors (per status) ───────────────────────────────────
-
-const GROUP_BORDER_COLOR: Partial<Record<MaturityStatus, string>> = {
-  'mvp-priority':   '#3b82f6',
-  'mvp-support':    '#3b82f6',
-  'core-stage':     '#f59e0b',
-  'next-stage':     '#8b5cf6',
-  'future-stage':   '#94a3b8',
-  'parallel-stage': '#94a3b8',
-  'planned-stage':  '#cbd5e1',
-  'strategic-stage':'#f87171',
-};
-
-// ── Helpers ───────────────────────────────────────────────────────────────────
-
-function gridClass(count: number): string {
-  if (count <= 2) return 'grid grid-cols-1 sm:grid-cols-2 gap-4';
-  return 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4';
+function matchesFilter(status: MaturityStatus, tab: FilterTab): boolean {
+  if (tab === 'all')    return true;
+  if (tab === 'mvp')    return status === 'mvp-priority' || status === 'mvp-support';
+  if (tab === 'core')   return status === 'core-stage';
+  if (tab === 'next')   return status === 'next-stage';
+  if (tab === 'future') return ['future-stage', 'parallel-stage', 'planned-stage', 'strategic-stage'].includes(status);
+  return true;
 }
 
-function pluralModules(n: number): string {
-  const mod10 = n % 10;
-  const mod100 = n % 100;
-  if (mod100 >= 11 && mod100 <= 19) return `${n} модулей`;
-  if (mod10 === 1) return `${n} модуль`;
-  if (mod10 >= 2 && mod10 <= 4) return `${n} модуля`;
-  return `${n} модулей`;
+// ─── Hero stats ────────────────────────────────────────────────────────────────
+
+const mvpCount    = modules.filter(m => m.status === 'mvp-priority' || m.status === 'mvp-support').length;
+const coreCount   = modules.filter(m => m.status === 'core-stage').length;
+const nextCount   = modules.filter(m => m.status === 'next-stage').length;
+const futureCount = modules.filter(m => ['future-stage', 'parallel-stage', 'planned-stage', 'strategic-stage'].includes(m.status)).length;
+
+// ─── Module name lookup ────────────────────────────────────────────────────────
+
+const MODULE_NAME = Object.fromEntries(modules.map(m => [m.id, m.name]));
+
+// ─── ModuleCard ────────────────────────────────────────────────────────────────
+
+function ModuleCard({
+  module,
+  expanded,
+  onToggle,
+}: {
+  module: Module;
+  expanded: boolean;
+  onToggle: () => void;
+}) {
+  const [hovered, setHovered] = useState(false);
+  const isMvp        = module.status === 'mvp-priority';
+  const contourColor = MODULE_CONTOUR_COLOR[module.id] ?? '#475569';
+  const badge        = BADGE[module.status] ?? { label: module.status, bg: 'rgba(100,116,139,0.12)', text: '#94a3b8', border: 'rgba(100,116,139,0.3)' };
+  const Icon         = MODULE_ICONS[module.id];
+
+  const cardStyle: React.CSSProperties = {
+    background: C.card,
+    scrollMarginTop: '120px',
+    transition: 'border-color 0.15s, box-shadow 0.15s, transform 0.15s',
+    transform: hovered ? 'translateY(-2px)' : undefined,
+    ...(isMvp
+      ? {
+          border:    '2px solid rgba(22,163,74,0.5)',
+          boxShadow: '0 0 0 1px rgba(22,163,74,0.12), 0 4px 24px rgba(22,163,74,0.12)',
+        }
+      : {
+          border:    hovered ? '1px solid rgba(37,99,235,0.4)' : `1px solid ${C.border}`,
+          boxShadow: hovered ? '0 4px 20px rgba(0,0,0,0.3)' : undefined,
+        }),
+  };
+
+  return (
+    <div
+      id={module.id}
+      className="rounded-2xl overflow-hidden cursor-pointer"
+      style={cardStyle}
+      onClick={onToggle}
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+    >
+      {/* Top colour bar */}
+      <div className="h-[3px]" style={{ background: contourColor }} />
+
+      <div className="p-4 sm:p-5">
+        {/* Header */}
+        <div className="flex items-start gap-3 mb-3">
+          {/* Module icon */}
+          <div
+            className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0"
+            style={{ background: contourColor + '1a' }}
+          >
+            {Icon && <Icon className="w-5 h-5" style={{ color: contourColor }} />}
+          </div>
+
+          {/* Name */}
+          <div className="flex-1 min-w-0">
+            <div className="text-sm font-bold leading-snug" style={{ color: C.text }}>
+              {module.name}
+            </div>
+            <div className="text-xs mt-0.5 truncate" style={{ color: C.muted }}>
+              {module.russianName}
+            </div>
+          </div>
+
+          {/* Status badge */}
+          <span
+            className="text-[10px] font-bold px-2 py-0.5 rounded-full border whitespace-nowrap shrink-0 ml-1"
+            style={{ background: badge.bg, color: badge.text, borderColor: badge.border }}
+          >
+            {isMvp ? '✦ MVP' : badge.label}
+          </span>
+        </div>
+
+        {/* Description */}
+        <p
+          className="text-sm leading-relaxed mb-3"
+          style={{
+            color: C.muted,
+            ...(expanded ? {} : {
+              display: '-webkit-box',
+              WebkitLineClamp: 3,
+              WebkitBoxOrient: 'vertical' as const,
+              overflow: 'hidden',
+            }),
+          }}
+        >
+          {module.description}
+        </p>
+
+        {/* Related module tags */}
+        {module.relatedModules.length > 0 && (
+          <div className="flex flex-wrap gap-1.5 mb-3">
+            {(expanded ? module.relatedModules : module.relatedModules.slice(0, 3)).map(id => (
+              <span
+                key={id}
+                className="text-[10px] font-medium px-2 py-0.5 rounded-md border"
+                style={{
+                  color:       contourColor,
+                  borderColor: contourColor + '40',
+                  background:  contourColor + '0d',
+                }}
+                onClick={e => e.stopPropagation()}
+              >
+                {MODULE_NAME[id] ?? id}
+              </span>
+            ))}
+            {!expanded && module.relatedModules.length > 3 && (
+              <span className="text-[10px] px-2 py-0.5 rounded-md" style={{ color: C.dim }}>
+                +{module.relatedModules.length - 3}
+              </span>
+            )}
+          </div>
+        )}
+
+        {/* Expand hint */}
+        <div className="flex items-center gap-1 text-xs" style={{ color: C.dim }}>
+          {expanded
+            ? <><ChevronUp className="w-3 h-3" />Свернуть</>
+            : <><ChevronDown className="w-3 h-3" />Подробнее</>
+          }
+        </div>
+
+        {/* Expanded details */}
+        {expanded && (
+          <div
+            className="mt-4 pt-4 border-t space-y-4"
+            style={{ borderColor: C.border }}
+            onClick={e => e.stopPropagation()}
+          >
+            {module.details && (
+              <div>
+                <div className="text-[10px] font-bold uppercase tracking-widest mb-2" style={{ color: C.dim }}>
+                  Детали
+                </div>
+                <p className="text-xs leading-relaxed" style={{ color: C.muted }}>
+                  {module.details}
+                </p>
+              </div>
+            )}
+
+            {module.inputData && module.inputData.length > 0 && (
+              <div>
+                <div className="text-[10px] font-bold uppercase tracking-widest mb-2" style={{ color: '#4ade80' }}>
+                  Входные данные
+                </div>
+                <div className="flex flex-wrap gap-1.5">
+                  {module.inputData.map(d => (
+                    <span
+                      key={d}
+                      className="text-xs px-2 py-0.5 rounded-md border"
+                      style={{ background: 'rgba(22,163,74,0.08)', color: '#86efac', borderColor: 'rgba(22,163,74,0.25)' }}
+                    >
+                      {d}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {module.outputData && module.outputData.length > 0 && (
+              <div>
+                <div className="text-[10px] font-bold uppercase tracking-widest mb-2" style={{ color: '#60a5fa' }}>
+                  Выходные данные
+                </div>
+                <div className="flex flex-wrap gap-1.5">
+                  {module.outputData.map(d => (
+                    <span
+                      key={d}
+                      className="text-xs px-2 py-0.5 rounded-md border"
+                      style={{ background: 'rgba(37,99,235,0.08)', color: '#93c5fd', borderColor: 'rgba(37,99,235,0.25)' }}
+                    >
+                      {d}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+        )}
+      </div>
+    </div>
+  );
 }
 
-// ── Page ──────────────────────────────────────────────────────────────────────
-
-type ViewMode = 'compact' | 'detailed';
+// ─── Page ──────────────────────────────────────────────────────────────────────
 
 export default function ModulesPage() {
-  const [search, setSearch]             = useState('');
-  const [statusFilter, setStatusFilter] = useState<MaturityStatus | 'all'>('all');
-  const [viewMode, setViewMode]         = useState<ViewMode>('compact');
-  const [statusOpen, setStatusOpen]     = useState(false);
-  const dropdownRef                     = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    if (!statusOpen) return;
-    const handler = (e: MouseEvent) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
-        setStatusOpen(false);
-      }
-    };
-    document.addEventListener('mousedown', handler);
-    return () => document.removeEventListener('mousedown', handler);
-  }, [statusOpen]);
+  const [search,   setSearch]   = useState('');
+  const [filter,   setFilter]   = useState<FilterTab>('all');
+  const [expanded, setExpanded] = useState<Set<string>>(new Set());
 
   const filtered = useMemo(() => {
     const q = search.toLowerCase().trim();
-    return modules.filter((m) => {
-      const matchesSearch =
+    return modules.filter(m => {
+      const matchSearch =
         !q ||
         m.name.toLowerCase().includes(q) ||
         m.russianName.toLowerCase().includes(q) ||
         m.description.toLowerCase().includes(q);
-      const matchesStatus = statusFilter === 'all' || m.status === statusFilter;
-      return matchesSearch && matchesStatus;
+      return matchSearch && matchesFilter(m.status, filter);
     });
-  }, [search, statusFilter]);
+  }, [search, filter]);
 
-  const grouped = statusOrder
-    .map((status) => ({
-      status,
-      label: statusLabels[status],
-      style: STATUS_STYLE[status],
-      meta:  STATUS_META[status],
-      items: filtered.filter((m) => m.status === status),
-    }))
-    .filter((g) => g.items.length > 0);
+  function toggleExpanded(id: string) {
+    setExpanded(prev => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id); else next.add(id);
+      return next;
+    });
+  }
 
-  const isFiltering = search.trim() !== '' || statusFilter !== 'all';
-  const isDetailed  = viewMode === 'detailed';
+  const isFiltering = search.trim() !== '' || filter !== 'all';
+  const activeTab   = TABS.find(t => t.id === filter)!;
 
   return (
-    <div className="min-h-screen bg-slate-100">
+    <div className="min-h-screen" style={{ background: C.bg }}>
 
-      {/* ── Hero ────────────────────────────────────────────────────────────── */}
-      <div
-        className="relative overflow-hidden border-b border-slate-800"
-        style={{ background: 'linear-gradient(135deg, #0f172a 0%, #1e293b 60%, #1e3a5f 100%)' }}
-      >
-        <div
-          className="absolute inset-0 pointer-events-none"
-          style={{
-            backgroundImage: 'radial-gradient(circle, rgba(71,85,105,0.4) 1px, transparent 1px)',
-            backgroundSize: '24px 24px',
-          }}
-        />
-        <div
-          className="absolute top-0 right-0 w-96 h-72 pointer-events-none"
-          style={{ background: 'radial-gradient(ellipse at top right, rgba(124,58,237,0.25) 0%, transparent 65%)' }}
-        />
-
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-14">
-          <div className="flex items-start gap-5 mb-8">
-            <div
-              className="w-14 h-14 rounded-2xl flex items-center justify-center shrink-0 shadow-xl"
-              style={{ background: 'rgba(124,58,237,0.18)', border: '1px solid rgba(124,58,237,0.38)' }}
-            >
-              {/* Railroad track icon */}
-              <svg className="w-7 h-7" viewBox="0 0 24 24" fill="none" stroke="#a78bfa" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <line x1="6" y1="2" x2="6" y2="22" />
-                <line x1="18" y1="2" x2="18" y2="22" />
-                <line x1="6" y1="5"  x2="18" y2="5" />
-                <line x1="6" y1="10" x2="18" y2="10" />
-                <line x1="6" y1="15" x2="18" y2="15" />
-                <line x1="6" y1="20" x2="18" y2="20" />
-              </svg>
-            </div>
-            <div className="flex-1 min-w-0">
-              <div
-                className="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold mb-3"
-                style={{ background: 'rgba(124,58,237,0.15)', border: '1px solid rgba(124,58,237,0.3)', color: '#c4b5fd' }}
-              >
-                <span className="w-1.5 h-1.5 rounded-full" style={{ background: '#a78bfa' }} />
-                Каталог цифровой платформы
-              </div>
-              <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-white leading-tight mb-2">
-                Каталог модулей Rail Ecosystem
-              </h1>
-              <p className="text-sm leading-relaxed max-w-2xl" style={{ color: '#94a3b8' }}>
-                {modules.length} цифровых модулей, покрывающих все производственные процессы КТЖ —
-                от маршрутных листов до ИИ-аналитики.
-              </p>
-            </div>
+      {/* ── Hero ──────────────────────────────────────────────────────────────── */}
+      <section className="py-12 md:py-16 border-b" style={{ borderColor: C.border }}>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-xs font-bold uppercase tracking-widest mb-4" style={{ color: C.dim }}>
+            Каталог
           </div>
-
-          <div className="flex gap-3 flex-wrap">
-            <span className="rounded-full px-3 py-1 text-sm font-medium" style={{ background: 'rgba(71,85,105,0.5)', color: '#cbd5e1' }}>
-              {modules.length} модулей
-            </span>
-            <span className="rounded-full px-3 py-1 text-sm font-medium border" style={{ background: 'rgba(37,99,235,0.2)', color: '#60a5fa', borderColor: 'rgba(37,99,235,0.3)' }}>
+          <h1
+            className="text-3xl md:text-4xl font-bold leading-tight mb-3 max-w-2xl"
+            style={{ color: C.text }}
+          >
+            Модули Rail Ecosystem
+          </h1>
+          <p className="text-base leading-relaxed mb-8 max-w-2xl" style={{ color: C.muted }}>
+            {modules.length} модулей: операционные, ядерные и стратегические
+          </p>
+          <div className="flex flex-wrap gap-3">
+            <span
+              className="rounded-full px-4 py-1.5 text-sm font-medium border"
+              style={{ background: 'rgba(22,163,74,0.15)', color: '#86efac', borderColor: 'rgba(22,163,74,0.35)' }}
+            >
               {mvpCount} в MVP
             </span>
-            <span className="rounded-full px-3 py-1 text-sm font-medium border" style={{ background: 'rgba(245,158,11,0.2)', color: '#fbbf24', borderColor: 'rgba(245,158,11,0.3)' }}>
-              {coreCount} ядра платформы
+            <span
+              className="rounded-full px-4 py-1.5 text-sm font-medium border"
+              style={{ background: 'rgba(124,58,237,0.12)', color: '#c4b5fd', borderColor: 'rgba(124,58,237,0.3)' }}
+            >
+              {coreCount} ядерных
             </span>
-            <span className="rounded-full px-3 py-1 text-sm font-medium border" style={{ background: 'rgba(239,68,68,0.2)', color: '#f87171', borderColor: 'rgba(239,68,68,0.3)' }}>
-              {strategicCount} стратегических
+            <span
+              className="rounded-full px-4 py-1.5 text-sm font-medium border"
+              style={{ background: 'rgba(37,99,235,0.12)', color: '#93c5fd', borderColor: 'rgba(37,99,235,0.3)' }}
+            >
+              {nextCount} следующих
+            </span>
+            <span
+              className="rounded-full px-4 py-1.5 text-sm font-medium border"
+              style={{ background: 'rgba(217,119,6,0.12)', color: '#fbbf24', borderColor: 'rgba(217,119,6,0.3)' }}
+            >
+              {futureCount} будущих
             </span>
           </div>
         </div>
-      </div>
+      </section>
 
-      {/* ── Control panel ───────────────────────────────────────────────────── */}
+      {/* ── Control bar ───────────────────────────────────────────────────────── */}
       <div
-        className="sticky top-14 z-10 border-b shadow-lg"
-        style={{ background: '#1e293b', borderColor: '#334155' }}
+        className="sticky top-14 z-10 border-b"
+        style={{
+          background:     C.card,
+          borderColor:    C.border,
+          backdropFilter: 'blur(12px)',
+          WebkitBackdropFilter: 'blur(12px)',
+        }}
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
-          <div className="flex flex-wrap gap-2.5 items-center">
+          <div className="flex items-center gap-3">
+
+            {/* Tab filter — horizontal scroll */}
+            <div
+              className="flex gap-1.5 overflow-x-auto flex-1"
+              style={{ scrollbarWidth: 'none' }}
+            >
+              {TABS.map(tab => {
+                const isActive = filter === tab.id;
+                return (
+                  <button
+                    key={tab.id}
+                    onClick={() => setFilter(tab.id)}
+                    className="shrink-0 px-3 py-1.5 rounded-lg text-sm font-medium whitespace-nowrap transition-all duration-150"
+                    style={
+                      isActive
+                        ? { background: tab.activeBg, color: tab.color, border: `1px solid ${tab.activeBorder}` }
+                        : { background: 'transparent', color: C.muted, border: `1px solid ${C.border}` }
+                    }
+                  >
+                    {tab.label}
+                  </button>
+                );
+              })}
+            </div>
 
             {/* Search */}
-            <div className="relative flex-1 min-w-44">
+            <div className="relative shrink-0 w-36 sm:w-48">
               <Search
-                className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 pointer-events-none"
-                style={{ color: '#64748b' }}
+                className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 pointer-events-none"
+                style={{ color: C.dim }}
               />
               <input
                 type="text"
                 value={search}
-                onChange={(e) => setSearch(e.target.value)}
-                placeholder="Поиск по названию..."
-                className="w-full rounded-lg pl-9 pr-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-violet-500 placeholder:text-slate-400"
-                style={{ background: '#0f172a', border: '1px solid #334155', color: '#f1f5f9' }}
+                onChange={e => setSearch(e.target.value)}
+                placeholder="Поиск..."
+                className="w-full rounded-lg pl-8 pr-3 py-1.5 text-sm focus:outline-none focus:ring-1 focus:ring-blue-500 placeholder:text-slate-600"
+                style={{ background: C.bg, border: `1px solid ${C.border}`, color: C.text }}
               />
             </div>
 
-            {/* Status filter — custom dropdown */}
-            <div className="relative" ref={dropdownRef}>
-              <button
-                onClick={() => setStatusOpen(v => !v)}
-                className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-violet-500 transition-colors hover:bg-slate-700/40"
-                style={{ background: '#0f172a', border: '1px solid #334155', color: '#cbd5e1' }}
-              >
-                <span className="truncate max-w-[160px]">
-                  {statusFilter === 'all' ? 'Все этапы' : statusLabels[statusFilter]}
-                </span>
-                <ChevronDown
-                  className={`w-3.5 h-3.5 shrink-0 transition-transform duration-150 ${statusOpen ? 'rotate-180' : ''}`}
-                  style={{ color: '#64748b' }}
-                />
-              </button>
-              {statusOpen && (
-                <div
-                  className="absolute top-full left-0 mt-1.5 w-60 rounded-xl overflow-hidden shadow-2xl z-20"
-                  style={{ background: '#1e293b', border: '1px solid #334155' }}
-                >
-                  <button
-                    onClick={() => { setStatusFilter('all'); setStatusOpen(false); }}
-                    className="w-full text-left px-3.5 py-2.5 text-sm transition-colors hover:bg-slate-700/60"
-                    style={{ color: statusFilter === 'all' ? '#a78bfa' : '#cbd5e1' }}
-                  >
-                    Все этапы
-                  </button>
-                  {statusOrder.map((s) => (
-                    <button
-                      key={s}
-                      onClick={() => { setStatusFilter(s); setStatusOpen(false); }}
-                      className="w-full text-left px-3.5 py-2.5 text-sm transition-colors hover:bg-slate-700/60 border-t"
-                      style={{
-                        color: statusFilter === s ? '#a78bfa' : '#cbd5e1',
-                        borderColor: '#334155',
-                      }}
-                    >
-                      {statusLabels[s]}
-                    </button>
-                  ))}
-                </div>
-              )}
-            </div>
-
-            {/* Clear filter */}
+            {/* Clear */}
             {isFiltering && (
               <button
-                onClick={() => { setSearch(''); setStatusFilter('all'); }}
-                className="inline-flex items-center gap-1.5 px-3 py-2 text-xs font-medium rounded-lg transition-colors hover:bg-slate-700"
-                style={{ color: '#94a3b8', border: '1px solid #334155' }}
+                onClick={() => { setSearch(''); setFilter('all'); }}
+                className="shrink-0 flex items-center gap-1 px-2.5 py-1.5 text-xs rounded-lg border transition-colors"
+                style={{ color: C.muted, borderColor: C.border }}
               >
-                <X className="w-3.5 h-3.5" />
-                Сбросить
+                <X className="w-3 h-3" />
+                <span className="hidden sm:inline">Сбросить</span>
               </button>
             )}
 
-            {/* View toggle */}
-            <div className="flex bg-slate-100 rounded-lg p-1 gap-1 shrink-0 ml-auto">
-              <button
-                onClick={() => setViewMode('compact')}
-                className={`flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-md transition-all duration-150 ${
-                  viewMode === 'compact'
-                    ? 'bg-white shadow-sm text-slate-700'
-                    : 'text-slate-500 hover:text-slate-700'
-                }`}
-              >
-                <LayoutGrid className="w-3.5 h-3.5" />
-                Кратко
-              </button>
-              <button
-                onClick={() => setViewMode('detailed')}
-                className={`flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded-md transition-all duration-150 ${
-                  viewMode === 'detailed'
-                    ? 'bg-white shadow-sm text-slate-700'
-                    : 'text-slate-500 hover:text-slate-700'
-                }`}
-              >
-                <AlignJustify className="w-3.5 h-3.5" />
-                Подробно
-              </button>
-            </div>
-
             {/* Counter */}
-            <span className="text-xs shrink-0 font-mono" style={{ color: '#64748b' }}>
-              {isFiltering
-                ? `${filtered.length} / ${modules.length}`
-                : `${modules.length} модулей`}
+            <span className="shrink-0 text-xs font-mono hidden sm:block" style={{ color: C.dim }}>
+              {filtered.length}/{modules.length}
             </span>
           </div>
         </div>
       </div>
 
-      {/* ── Module groups ────────────────────────────────────────────────────── */}
+      {/* ── Module grid ───────────────────────────────────────────────────────── */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {grouped.length > 0 ? (
-          <div className="space-y-6">
-            {grouped.map(({ status, label, style, meta, items }) => {
-              const GroupIcon = meta.Icon;
-              const isSingle = items.length === 1;
-
-              return (
-                <div
-                  key={status}
-                  className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden"
-                  style={{ borderTopColor: style.dot, borderTopWidth: 3 }}
+        {filtered.length > 0 ? (
+          <>
+            {/* Active filter label */}
+            {filter !== 'all' && (
+              <div className="flex items-center gap-2 mb-5">
+                <span
+                  className="text-xs font-semibold px-2.5 py-1 rounded-full border"
+                  style={{ background: activeTab.activeBg, color: activeTab.color, borderColor: activeTab.activeBorder }}
                 >
-                  {/* Group header */}
-                  <div
-                    className="px-6 py-4 border-b border-slate-100"
-                    style={{ background: style.bg }}
-                  >
-                    <div className="flex items-center gap-3 flex-wrap">
-                      <div
-                        className="w-8 h-8 rounded-lg flex items-center justify-center shrink-0"
-                        style={{ background: style.bg, border: `1px solid ${style.border}` }}
-                      >
-                        <GroupIcon className="w-4 h-4" style={{ color: style.dot }} />
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center gap-2.5 flex-wrap">
-                          <h2
-                            className="text-sm font-bold pl-3 border-l-4"
-                            style={{ color: style.text, borderColor: GROUP_BORDER_COLOR[status] ?? style.dot }}
-                          >
-                            {label}
-                          </h2>
-                          <span
-                            className="text-[10px] font-bold px-2 py-0.5 rounded-full border shrink-0"
-                            style={{ background: style.bg, color: style.text, borderColor: style.border }}
-                          >
-                            {pluralModules(items.length)}
-                          </span>
-                        </div>
-                        <p className="text-xs text-slate-500 mt-0.5">{meta.description}</p>
-                      </div>
-                    </div>
-                  </div>
+                  {activeTab.label}
+                </span>
+                <span className="text-xs" style={{ color: C.dim }}>
+                  {filtered.length} {filtered.length === 1 ? 'модуль' : filtered.length < 5 ? 'модуля' : 'модулей'}
+                </span>
+              </div>
+            )}
 
-                  {/* Cards: featured (1 item) or grid (2+) */}
-                  {isSingle ? (
-                    <div className="p-5">
-                      <ModuleCard
-                        module={items[0]}
-                        detailed={isDetailed}
-                        featured
-                      />
-                    </div>
-                  ) : (
-                    <div className={`p-5 ${gridClass(items.length)}`}>
-                      {items.map((mod) => (
-                        <div key={mod.id} id={mod.id}>
-                          <ModuleCard module={mod} detailed={isDetailed} />
-                        </div>
-                      ))}
-                    </div>
-                  )}
-                </div>
-              );
-            })}
-          </div>
-        ) : (
-          /* ── Empty state ── */
-          <div className="flex flex-col items-center justify-center py-24 bg-white rounded-2xl border border-slate-200 shadow-sm">
-            <div className="w-16 h-16 rounded-2xl bg-slate-100 flex items-center justify-center mb-4">
-              <Search className="w-7 h-7 text-slate-400" />
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {filtered.map(mod => (
+                <ModuleCard
+                  key={mod.id}
+                  module={mod}
+                  expanded={expanded.has(mod.id)}
+                  onToggle={() => toggleExpanded(mod.id)}
+                />
+              ))}
             </div>
-            <div className="text-slate-800 font-bold text-base mb-1">Модули не найдены</div>
-            <p className="text-sm text-slate-500 mb-5 text-center max-w-xs">
-              По запросу «{search}» ничего не найдено.
+          </>
+        ) : (
+          <div
+            className="flex flex-col items-center justify-center py-24 rounded-2xl border"
+            style={{ borderColor: C.border }}
+          >
+            <div
+              className="w-14 h-14 rounded-2xl flex items-center justify-center mb-4"
+              style={{ background: C.card }}
+            >
+              <Search className="w-6 h-6" style={{ color: C.muted }} />
+            </div>
+            <div className="text-base font-bold mb-1" style={{ color: C.text }}>
+              Модули не найдены
+            </div>
+            <p className="text-sm mb-5 text-center max-w-xs" style={{ color: C.muted }}>
+              Попробуйте изменить поиск или выбрать другой фильтр.
             </p>
             <button
-              onClick={() => { setSearch(''); setStatusFilter('all'); }}
-              className="inline-flex items-center gap-2 px-5 py-2.5 text-sm font-semibold text-white rounded-xl transition-colors hover:opacity-90"
-              style={{ background: '#7c3aed' }}
+              onClick={() => { setSearch(''); setFilter('all'); }}
+              className="inline-flex items-center gap-2 px-5 py-2.5 text-sm font-semibold rounded-xl transition-opacity hover:opacity-90"
+              style={{ background: '#7c3aed', color: '#fff' }}
             >
               Сбросить фильтры
             </button>

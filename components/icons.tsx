@@ -1,5 +1,6 @@
 import {
   Route,
+  Wrench,
   ClipboardCheck,
   FileText,
   ShieldCheck,
@@ -7,8 +8,10 @@ import {
   Clock,
   Container,
   BarChart3,
+  Brain,
   BrainCircuit,
   Database,
+  Plug,
   PlugZap,
   Bell,
   FileSpreadsheet,
@@ -38,16 +41,16 @@ import {
 
 export const MODULE_ICONS: Record<string, LucideIcon> = {
   railroutes:    Route,
-  railwork:      ClipboardCheck,
+  railwork:      Wrench,
   raildocs:      FileText,
   railsafety:    ShieldCheck,
   railcrew:      Users,
   railtime:      Clock,
   railcargo:     Container,
   railanalytics: BarChart3,
-  railai:        BrainCircuit,
+  railai:        Brain,
   raildatahub:   Database,
-  integration:   PlugZap,
+  integration:   Plug,
   notifications: Bell,
   reporting:     FileSpreadsheet,
   usermgmt:      UserCog,
@@ -125,8 +128,8 @@ export const VISIBILITY_ICONS = {
 export {
   Network, Boxes, Package, Workflow, TriangleAlert,
   BookOpen, Rocket, Milestone, Map, Route,
-  ClipboardCheck, FileText, ShieldCheck, Users, Clock,
-  Container, BarChart3, BrainCircuit, Database, PlugZap,
+  Wrench, ClipboardCheck, FileText, ShieldCheck, Users, Clock,
+  Container, BarChart3, Brain, BrainCircuit, Database, Plug, PlugZap,
   Bell, FileSpreadsheet, UserCog, Cpu, Building2, GitBranch,
   Layers, MapPin, CheckCircle, ArrowRight, Info,
 };
