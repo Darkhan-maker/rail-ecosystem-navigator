@@ -99,7 +99,7 @@ body {
   50%       { transform: scale(1.6); opacity: 0;   }
 }
 
-/* ─── Leaflet marker ─────────────────────────────────────────────────────── */
+/* ─── Leaflet markers ────────────────────────────────────────────────────── */
 
 .station-marker {
   background: transparent !important;
@@ -110,6 +110,11 @@ body {
   position: relative;
   width: 30px;
   height: 30px;
+}
+
+.station-marker-inner.sm {
+  width: 24px;
+  height: 24px;
 }
 
 .station-marker-pulse {
@@ -128,8 +133,42 @@ body {
   width: 14px;
   height: 14px;
   border-radius: 50%;
-  background: #2563eb;
   border: 3px solid #fff;
   transform: translate(-50%, -50%);
+}
+
+.station-marker-dot.pilot {
+  background: #2563eb;
   box-shadow: 0 0 8px rgba(37, 99, 235, 0.6);
+}
+
+.station-marker-dot.base {
+  background: #d97706;
+  box-shadow: 0 0 8px rgba(217, 119, 6, 0.6);
+}
+
+/* ─── Leaflet popup — dark theme ─────────────────────────────────────────── */
+
+.leaflet-popup-content-wrapper {
+  background: #0c1424 !important;
+  border: 1px solid #1a2535 !important;
+  border-radius: 8px !important;
+  color: #e2e8f0 !important;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5) !important;
+}
+
+.leaflet-popup-tip {
+  background: #0c1424 !important;
+}
+
+.leaflet-popup-content {
+  margin: 12px 14px !important;
+}
+
+.leaflet-popup-close-button {
+  color: #4a6080 !important;
+}
+
+.leaflet-popup-close-button:hover {
+  color: #7a90a8 !important;
 }
