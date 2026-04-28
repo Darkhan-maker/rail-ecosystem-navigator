@@ -1,10 +1,14 @@
 import type { Metadata } from 'next';
-import { Geist, Geist_Mono } from 'next/font/google';
+import { IBM_Plex_Sans } from 'next/font/google';
 import './globals.css';
 import Header from '@/components/Header';
 
-const geistSans = Geist({ variable: '--font-geist-sans', subsets: ['latin'] });
-const geistMono = Geist_Mono({ variable: '--font-geist-mono', subsets: ['latin'] });
+const ibmPlex = IBM_Plex_Sans({
+  subsets: ['latin', 'cyrillic'],
+  weight: ['400', '500', '600', '700'],
+  display: 'swap',
+  variable: '--font-ibm-plex',
+});
 
 export const metadata: Metadata = {
   title: 'Rail Ecosystem Navigator',
@@ -13,8 +17,8 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="ru" className={`${geistSans.variable} ${geistMono.variable}`}>
-      <body className="min-h-screen bg-slate-100 text-slate-900 antialiased">
+    <html lang="ru" className={ibmPlex.variable}>
+      <body className="min-h-screen antialiased">
         <Header />
         <main>{children}</main>
       </body>
