@@ -44,7 +44,7 @@ export const contours: Contour[] = [
       { label: 'Локомотивные бригады' },
       { label: 'Рейсы / рабочие циклы' },
     ],
-    color: '#16a34a',
+    color: '#d97706',
     modules: ['railcrew', 'railtime', 'railcargo', 'railanalytics'],
   },
   {

@@ -13,7 +13,7 @@ export default function ScenariosPage() {
         chips={[
           { label: `${scenarios.length} сценария`, color: '#2563eb' },
           { label: 'ШЧ — маршрутный лист', color: '#2563eb' },
-          { label: 'Цикл бригады', color: '#16a34a' },
+          { label: 'Цикл бригады', color: '#d97706' },
         ]}
         accentColor="#2563eb"
       />
@@ -24,7 +24,7 @@ export default function ScenariosPage() {
           <div className="flex flex-wrap gap-6">
             {[
               { Icon: Route,  title: 'Контур ШЧ',      desc: 'Служебные поездки работников дистанции', color: '#2563eb' },
-              { Icon: Users,  title: 'Контур бригад',   desc: 'Рабочий цикл локомотивной бригады',     color: '#16a34a' },
+              { Icon: Users,  title: 'Контур бригад',   desc: 'Рабочий цикл локомотивной бригады',     color: '#d97706' },
             ].map(item => (
               <div key={item.title} className="flex items-center gap-3">
                 <div

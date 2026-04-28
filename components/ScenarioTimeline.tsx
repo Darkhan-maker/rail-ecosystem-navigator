@@ -13,7 +13,7 @@ const SCENARIO_META: Record<string, { color: string; Icon: LucideIcon; outcome: 
     outcome: 'Каждая поездка зафиксирована цифровым следом: QR-отметки, Excel-реестр для бухгалтерии, аналитика по дистанции.',
   },
   'crew-cycle': {
-    color: '#16a34a',
+    color: '#d97706',
     Icon: Users,
     outcome: 'Полный рабочий цикл бригады оцифрован: от вызова до учёта времени, без бумажных журналов.',
   },
@@ -103,7 +103,7 @@ export default function ScenarioTimeline({ scenario }: ScenarioTimelineProps) {
                       className="text-[10px] font-medium px-2 py-0.5 rounded-full border"
                       style={{
                         background: meta.color + '08',
-                        color: meta.color === '#2563eb' ? '#1d4ed8' : '#15803d',
+                        color: meta.color === '#2563eb' ? '#1d4ed8' : '#92400e',
                         borderColor: meta.color + '25',
                       }}
                     >

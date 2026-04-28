@@ -1,188 +1,378 @@
+import Link from 'next/link';
+import {
+  Route, Container, Cpu, Target, ArrowRight,
+  Database, Brain, BarChart3, FileText, Bell, Users, Plug,
+  type LucideIcon,
+} from 'lucide-react';
 import { contours, modules } from '@/data/railEcosystemContent';
-import PageHeader from '@/components/PageHeader';
-import { Network, GitBranch, Cpu, ArrowRight } from 'lucide-react';
-import type { LucideIcon } from 'lucide-react';
+import type { Contour, ContourChainNode } from '@/types/railEcosystem';
 
-const CONTOUR_META: { Icon: LucideIcon; label: string; effect: string }[] = [
-  {
-    Icon: GitBranch,
-    label: 'Магистральная сеть',
-    effect: 'Прозрачный учёт служебных поездок, работ и документации по всей сети дистанций.',
-  },
-  {
-    Icon: ArrowRight,
-    label: 'Грузовые перевозки',
-    effect: 'Цифровой контроль полного рабочего цикла каждой бригады — от вызова до учёта времени.',
-  },
-  {
-    Icon: Cpu,
-    label: 'Цифровое ядро',
-    effect: 'Единый источник данных, аналитики и управления ролями для обоих контуров.',
-  },
-];
+// ─── Constants ─────────────────────────────────────────────────────────────────
 
-export default function ContoursPage() {
+const C = {
+  bg:     '#080d1a',
+  card:   '#0c1424',
+  border: '#1a2535',
+  text:   '#e2e8f0',
+  muted:  '#7a90a8',
+  dim:    '#4a6080',
+};
+
+const CONTOUR_ICONS: Record<string, LucideIcon> = {
+  'magistral':    Route,
+  'cargo':        Container,
+  'digital-core': Cpu,
+};
+
+const MODULE_ICONS: Record<string, LucideIcon> = {
+  'railanalytics': BarChart3,
+  'railai':        Brain,
+  'raildatahub':   Database,
+  'reporting':     FileText,
+  'notifications': Bell,
+  'usermgmt':      Users,
+  'integration':   Plug,
+};
+
+const CONTOUR_EFFECTS: Record<string, string> = {
+  'magistral': 'Прозрачный учёт служебных поездок, работ и документации по всей сети дистанций — без бумаги и ручного реестра.',
+  'cargo':     'Цифровой контроль полного рабочего цикла каждой бригады — от вызова до учёта времени и закрытия смены.',
+};
+
+// ─── Org Hierarchy ─────────────────────────────────────────────────────────────
+
+function OrgHierarchy({ chain, color }: { chain: ContourChainNode[]; color: string }) {
   return (
-    <div className="min-h-screen bg-slate-100">
-      <PageHeader
-        Icon={Network}
-        title="Операционные контуры Rail Ecosystem"
-        lead="Два производственных контура и единое цифровое ядро — каждый со своей организационной иерархией, процессами и модулями."
-        chips={[
-          { label: '3 контура', color: '#2563eb' },
-          { label: '14 модулей', color: '#7c3aed' },
-          { label: '2 MVP в работе', color: '#16a34a' },
-        ]}
-      />
+    <div className="space-y-1.5">
+      {chain.map((node, i) => (
+        <div key={i} style={{ paddingLeft: `${Math.min(i, 5) * 16}px` }}>
+          <div
+            className="px-3 py-2 rounded-lg border text-sm"
+            style={{
+              background:  i === 0 ? color + '18' : C.bg,
+              borderColor: i === 0 ? color + '45' : C.border,
+              ...(i > 0 ? { borderLeft: `2px solid ${color}35` } : {}),
+            }}
+          >
+            <span
+              className={i === 0 ? 'font-bold' : 'font-medium'}
+              style={{ color: i === 0 ? color : C.text }}
+            >
+              {node.label}
+            </span>
+            {node.sublabel && (
+              <span className="ml-2 text-xs" style={{ color: C.muted }}>
+                — {node.sublabel}
+              </span>
+            )}
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+}
 
-      {/* Stat strip */}
-      <div className="bg-white border-b border-slate-200">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5">
-          <div className="grid grid-cols-3 gap-4 sm:gap-8 text-center">
-            {[
-              { value: '2', label: 'операционных контура', color: '#2563eb' },
-              { value: '1', label: 'цифровое ядро платформы', color: '#7c3aed' },
-              { value: '14', label: 'цифровых модулей', color: '#16a34a' },
-            ].map(s => (
-              <div key={s.label}>
-                <div className="text-2xl sm:text-3xl font-bold" style={{ color: s.color }}>{s.value}</div>
-                <div className="text-xs text-slate-500 mt-0.5 leading-snug">{s.label}</div>
-              </div>
+// ─── Operational Contour Card ──────────────────────────────────────────────────
+
+function OperationalContourCard({ contour }: { contour: Contour }) {
+  const Icon = CONTOUR_ICONS[contour.id] ?? Route;
+  const effect = CONTOUR_EFFECTS[contour.id] ?? '';
+  const contourModules = modules.filter((m) => contour.modules.includes(m.id));
+
+  return (
+    <div
+      className="rounded-2xl overflow-hidden border"
+      style={{
+        background:   C.card,
+        borderColor:  C.border,
+        borderTop:    `3px solid ${contour.color}`,
+      }}
+    >
+      {/* Header */}
+      <div className="px-6 py-5 sm:px-8" style={{ background: contour.color + '0a' }}>
+        <div className="flex items-start gap-4">
+          <div
+            className="w-11 h-11 rounded-xl flex items-center justify-center shrink-0"
+            style={{ background: contour.color + '1a' }}
+          >
+            <Icon className="w-5 h-5" style={{ color: contour.color }} />
+          </div>
+          <div className="flex-1 min-w-0">
+            <div className="flex items-center gap-3 flex-wrap mb-1">
+              <h2 className="text-lg font-bold" style={{ color: C.text }}>
+                {contour.name}
+              </h2>
+              <span
+                className="text-xs font-medium px-2.5 py-0.5 rounded-full border"
+                style={{
+                  color:       contour.color,
+                  borderColor: contour.color + '40',
+                  background:  contour.color + '10',
+                }}
+              >
+                {contour.modules.length} модулей
+              </span>
+            </div>
+            <p className="text-sm leading-relaxed" style={{ color: C.muted }}>
+              {contour.description}
+            </p>
+          </div>
+        </div>
+      </div>
+
+      {/* Body: org hierarchy + modules */}
+      <div className="grid lg:grid-cols-2 border-t" style={{ borderColor: C.border }}>
+        {/* Left: org hierarchy */}
+        <div className="px-6 py-6 sm:px-8">
+          <div
+            className="text-[10px] font-bold uppercase tracking-widest mb-4"
+            style={{ color: C.dim }}
+          >
+            Организационная иерархия
+          </div>
+          <OrgHierarchy chain={contour.chain} color={contour.color} />
+        </div>
+
+        {/* Right: modules */}
+        <div
+          className="px-6 py-6 sm:px-8 border-t lg:border-t-0 lg:border-l"
+          style={{ borderColor: C.border }}
+        >
+          <div
+            className="text-[10px] font-bold uppercase tracking-widest mb-4"
+            style={{ color: C.dim }}
+          >
+            Цифровые модули
+          </div>
+          <div className="flex flex-wrap gap-2">
+            {contourModules.map((m) => (
+              <Link
+                key={m.id}
+                href={`/modules#${m.id}`}
+                className="text-sm px-2.5 py-1.5 rounded-md border transition-opacity hover:opacity-70"
+                style={{
+                  color:       contour.color,
+                  borderColor: contour.color + '40',
+                  background:  contour.color + '0e',
+                }}
+              >
+                {m.name}
+              </Link>
             ))}
           </div>
         </div>
       </div>
 
-      {/* Contour panels */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-8">
-        {contours.map((contour, idx) => {
-          const contourModules = modules.filter((m) => contour.modules.includes(m.id));
-          const { Icon: ContourIcon, effect } = CONTOUR_META[idx] ?? CONTOUR_META[0];
+      {/* Effect footer */}
+      <div
+        className="border-t px-6 py-4 sm:px-8 flex items-start gap-3"
+        style={{ borderColor: C.border, background: contour.color + '08' }}
+      >
+        <Target className="w-4 h-4 shrink-0 mt-0.5" style={{ color: contour.color }} />
+        <div>
+          <div
+            className="text-[10px] font-bold uppercase tracking-widest mb-1"
+            style={{ color: contour.color }}
+          >
+            Эффект
+          </div>
+          <p className="text-sm leading-relaxed" style={{ color: C.muted }}>
+            {effect}
+          </p>
+        </div>
+      </div>
+    </div>
+  );
+}
 
-          return (
-            <div
-              key={contour.id}
-              className="bg-white rounded-2xl overflow-hidden shadow-sm border border-slate-200"
-              style={{ borderTopColor: contour.color, borderTopWidth: 3 }}
-            >
-              {/* Panel header */}
-              <div
-                className="px-6 py-5 sm:px-8"
-                style={{ background: `linear-gradient(135deg, ${contour.color}08 0%, transparent 70%)` }}
-              >
-                <div className="flex items-start gap-4 flex-wrap">
-                  <div
-                    className="w-11 h-11 rounded-xl flex items-center justify-center shrink-0"
-                    style={{ background: contour.color + '15', border: `1px solid ${contour.color}28` }}
-                  >
-                    <ContourIcon className="w-5 h-5" style={{ color: contour.color }} />
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-3 flex-wrap">
-                      <h2 className="text-lg font-bold text-slate-900">{contour.name}</h2>
-                      <span className="text-xs font-medium px-3 py-1 rounded-full shrink-0 bg-slate-100 text-slate-600">
-                        {contour.modules.length} модулей
-                      </span>
-                    </div>
-                    <p className="text-sm text-slate-500 mt-1.5 leading-relaxed max-w-2xl">{contour.description}</p>
-                  </div>
-                </div>
-              </div>
+// ─── Digital Core Card ─────────────────────────────────────────────────────────
 
-              {/* Panel body */}
-              <div className="border-t border-slate-100 grid lg:grid-cols-2 divide-y lg:divide-y-0 lg:divide-x divide-slate-100">
-                {/* Org chain */}
-                <div className="px-6 py-6 sm:px-8">
-                  <div className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-5">
-                    Организационная иерархия
-                  </div>
-                  <div className="space-y-0">
-                    {contour.chain.map((node, i) => (
-                      <div key={i} className="flex items-stretch gap-3">
-                        <div className="flex flex-col items-center w-5 shrink-0">
-                          <div
-                            className="w-3 h-3 rounded-full border-2 mt-1 shrink-0 z-10"
-                            style={{
-                              borderColor: contour.color,
-                              background: i === 0 ? contour.color : '#fff',
-                            }}
-                          />
-                          {i < contour.chain.length - 1 && (
-                            <div className="w-px flex-1 min-h-[16px]" style={{ background: contour.color + '30' }} />
-                          )}
-                        </div>
-                        <div className="pb-3">
-                          <span className={`text-sm ${i === 0 ? 'font-semibold text-slate-900' : 'text-slate-700'}`}>
-                            {node.label}
-                          </span>
-                          {node.sublabel && (
-                            <span className="text-xs text-slate-400 ml-2">— {node.sublabel}</span>
-                          )}
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
+const VIOLET = '#7c3aed';
 
-                {/* Modules */}
-                {contourModules.length > 0 && (
-                  <div className="px-6 py-6 sm:px-8">
-                    <div className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-5">
-                      Цифровые модули
-                    </div>
-                    <div className="flex flex-wrap gap-2">
-                      {contourModules.map((m) => (
-                        <a
-                          key={m.id}
-                          href={`/modules#${m.id}`}
-                          className="bg-slate-100 text-slate-600 hover:bg-slate-200 hover:text-slate-800 rounded-md px-2.5 py-1 text-sm transition-colors cursor-pointer"
-                        >
-                          {m.name}
-                        </a>
-                      ))}
-                    </div>
-                  </div>
-                )}
-              </div>
+function DigitalCoreCard({ contour }: { contour: Contour }) {
+  const coreModules = modules.filter((m) => contour.modules.includes(m.id));
 
-              {/* Effect footer */}
-              <div
-                className="border-t border-slate-100 px-6 py-4 sm:px-8 flex items-start gap-3"
-                style={{ background: contour.color + '06' }}
+  return (
+    <div
+      className="rounded-2xl overflow-hidden border"
+      style={{ background: C.card, borderColor: C.border, borderTop: `3px solid ${VIOLET}` }}
+    >
+      {/* Header */}
+      <div className="px-6 py-5 sm:px-8" style={{ background: VIOLET + '0a' }}>
+        <div className="flex items-start gap-4">
+          <div
+            className="w-11 h-11 rounded-xl flex items-center justify-center shrink-0"
+            style={{ background: VIOLET + '1a' }}
+          >
+            <Cpu className="w-5 h-5" style={{ color: VIOLET }} />
+          </div>
+          <div className="flex-1 min-w-0">
+            <h2 className="text-lg font-bold mb-1" style={{ color: C.text }}>
+              Цифровое ядро Rail Ecosystem
+            </h2>
+            <p className="text-sm leading-relaxed" style={{ color: C.muted }}>
+              Горизонтальная платформа, обслуживающая оба операционных контура
+            </p>
+          </div>
+        </div>
+      </div>
+
+      {/* Platform composition */}
+      <div className="px-6 py-6 sm:px-8 border-t" style={{ borderColor: C.border }}>
+        <div
+          className="text-[10px] font-bold uppercase tracking-widest mb-4"
+          style={{ color: C.dim }}
+        >
+          Состав платформы
+        </div>
+        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
+          {coreModules.map((m) => {
+            const ModIcon = MODULE_ICONS[m.id] ?? Database;
+            return (
+              <Link
+                key={m.id}
+                href={`/modules#${m.id}`}
+                className="flex items-start gap-3 rounded-xl p-3 border transition-opacity hover:opacity-75"
+                style={{ background: C.bg, borderColor: C.border }}
               >
                 <div
-                  className="w-5 h-5 rounded-full flex items-center justify-center shrink-0 mt-0.5"
-                  style={{ background: contour.color + '20' }}
+                  className="w-8 h-8 rounded-lg flex items-center justify-center shrink-0"
+                  style={{ background: VIOLET + '15' }}
                 >
-                  <svg className="w-2.5 h-2.5" style={{ color: contour.color }} fill="currentColor" viewBox="0 0 8 8">
-                    <circle cx="4" cy="4" r="3" />
-                  </svg>
+                  <ModIcon className="w-4 h-4" style={{ color: VIOLET }} />
                 </div>
-                <p className="text-xs text-slate-600 leading-relaxed">
-                  <span className="font-semibold text-slate-700">Эффект: </span>{effect}
-                </p>
-              </div>
-            </div>
-          );
-        })}
+                <div className="min-w-0">
+                  <div className="text-sm font-semibold leading-tight" style={{ color: C.text }}>
+                    {m.name}
+                  </div>
+                  <div className="text-xs mt-0.5 leading-snug" style={{ color: C.muted }}>
+                    {m.russianName}
+                  </div>
+                </div>
+              </Link>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* General function */}
+      <div
+        className="border-t px-6 py-4 sm:px-8 flex items-start gap-3"
+        style={{ borderColor: C.border, background: VIOLET + '08' }}
+      >
+        <Target className="w-4 h-4 shrink-0 mt-0.5" style={{ color: VIOLET }} />
+        <div>
+          <div
+            className="text-[10px] font-bold uppercase tracking-widest mb-1"
+            style={{ color: VIOLET }}
+          >
+            Общая функция
+          </div>
+          <p className="text-sm leading-relaxed" style={{ color: C.muted }}>
+            {contour.description}
+          </p>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ─── Page ──────────────────────────────────────────────────────────────────────
+
+export default function ContoursPage() {
+  const operationalContours = contours.filter((c) => c.id !== 'digital-core');
+  const digitalCore = contours.find((c) => c.id === 'digital-core')!;
+
+  return (
+    <div className="min-h-screen" style={{ background: C.bg }}>
+
+      {/* Hero */}
+      <section className="py-12 md:py-16 border-b" style={{ borderColor: C.border }}>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div
+            className="text-xs font-bold uppercase tracking-widest mb-4"
+            style={{ color: C.dim }}
+          >
+            Архитектура
+          </div>
+          <h1
+            className="text-3xl md:text-4xl font-bold leading-tight mb-3 max-w-2xl"
+            style={{ color: C.text }}
+          >
+            Операционные контуры Rail Ecosystem
+          </h1>
+          <p className="text-base leading-relaxed mb-8 max-w-2xl" style={{ color: C.muted }}>
+            Два производственных контура и единое цифровое ядро — каждый со своей
+            организационной иерархией, процессами и цифровыми модулями.
+          </p>
+          <div className="flex flex-wrap gap-3">
+            <span
+              className="rounded-full px-4 py-1.5 text-sm font-medium border"
+              style={{
+                background:  'rgba(37,99,235,0.12)',
+                color:       '#93c5fd',
+                borderColor: 'rgba(37,99,235,0.3)',
+              }}
+            >
+              2 операционных контура
+            </span>
+            <span
+              className="rounded-full px-4 py-1.5 text-sm font-medium border"
+              style={{
+                background:  'rgba(124,58,237,0.12)',
+                color:       '#c4b5fd',
+                borderColor: 'rgba(124,58,237,0.3)',
+              }}
+            >
+              1 цифровое ядро
+            </span>
+            <span
+              className="rounded-full px-4 py-1.5 text-sm font-medium border"
+              style={{
+                background:  'rgba(71,85,105,0.12)',
+                color:       '#94a3b8',
+                borderColor: 'rgba(71,85,105,0.3)',
+              }}
+            >
+              14 модулей
+            </span>
+          </div>
+        </div>
+      </section>
+
+      {/* Cards */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-8">
+        {operationalContours.map((c) => (
+          <OperationalContourCard key={c.id} contour={c} />
+        ))}
+        <DigitalCoreCard contour={digitalCore} />
       </div>
 
       {/* Bottom CTA */}
-      <div className="border-t border-slate-200 bg-white">
+      <div className="border-t" style={{ borderColor: C.border }}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
           <div>
-            <div className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1">Каталог модулей</div>
-            <p className="text-sm text-slate-600">Изучите все 14 модулей с деталями, входными/выходными данными и связями.</p>
+            <div
+              className="text-[10px] font-bold uppercase tracking-widest mb-1"
+              style={{ color: C.dim }}
+            >
+              Каталог модулей
+            </div>
+            <p className="text-sm" style={{ color: C.muted }}>
+              Изучите все 14 модулей с деталями, входными/выходными данными и связями.
+            </p>
           </div>
-          <a
+          <Link
             href="/modules"
-            className="shrink-0 inline-flex items-center gap-2 px-5 py-2.5 bg-slate-900 text-white rounded-xl text-sm font-semibold hover:bg-slate-800 transition-colors shadow-sm"
+            className="shrink-0 inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-semibold border transition-opacity hover:opacity-80"
+            style={{ background: C.card, color: C.text, borderColor: C.border }}
           >
             Все модули
             <ArrowRight className="w-4 h-4" />
-          </a>
+          </Link>
         </div>
       </div>
+
     </div>
   );
 }

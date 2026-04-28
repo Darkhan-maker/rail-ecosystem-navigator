@@ -170,7 +170,7 @@ const STRUCTURE_NODES: Node<MapNodeData>[] = [
   },
   {
     id: 'zone-cargo', type: 'zoneNode', position: { x: 900, y: 100 },
-    data: zd('Контур грузовых перевозок', '#16a34a'),
+    data: zd('Контур грузовых перевозок', '#d97706'),
     style: { width: 310, height: 440 }, selectable: false, focusable: false, zIndex: -1,
   },
 
