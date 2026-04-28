@@ -9,10 +9,11 @@ interface TermProps {
 }
 
 export function Term({ children, termKey }: TermProps) {
-  const [open, setOpen] = useState(false);
-  const ref  = useRef<HTMLSpanElement>(null);
-  const key  = termKey ?? children;
-  const entry = glossaryTerms[key];
+  const [open, setOpen]   = useState(false);
+  const ref               = useRef<HTMLSpanElement>(null);
+  const key               = termKey ?? children;
+  const entry             = glossaryTerms[key];
+  const tooltipId         = `term-tooltip-${key.replace(/\s+/g, '-')}`;
 
   // Close on outside mousedown / touchstart
   useEffect(() => {
@@ -41,6 +42,9 @@ export function Term({ children, termKey }: TermProps) {
       {/* Trigger */}
       <button
         onClick={() => setOpen(v => !v)}
+        aria-expanded={open}
+        aria-controls={tooltipId}
+        aria-label={`${children} — нажмите для расшифровки`}
         className="cursor-help font-[inherit] text-[inherit] leading-[inherit]"
         style={{
           background:   'none',
@@ -55,6 +59,8 @@ export function Term({ children, termKey }: TermProps) {
       {/* Tooltip */}
       {open && (
         <span
+          id={tooltipId}
+          role="tooltip"
           className="absolute z-50 left-1/2 pointer-events-none"
           style={{
             bottom:    'calc(100% + 8px)',
