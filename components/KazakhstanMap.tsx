@@ -9,38 +9,48 @@ import { pilotStations } from '@/lib/pilotStations';
 delete (L.Icon.Default.prototype as unknown as Record<string, unknown>)['_getIconUrl'];
 
 const baseIcon = L.divIcon({
-  className:   'station-marker base',
-  html: `<div class="station-marker-inner sm">
-    <div class="station-marker-dot base"></div>
-  </div>`,
-  iconSize:    [24, 24],
-  iconAnchor:  [12, 12],
-  popupAnchor: [0, -14],
+  className:   'station-marker',
+  html: `
+    <div class="station-marker-inner">
+      <div class="station-marker-dot base"></div>
+    </div>
+  `,
+  iconSize:    [28, 28],
+  iconAnchor:  [14, 14],
+  popupAnchor: [0, -16],
 });
 
 const pilotIcon = L.divIcon({
-  className:   'station-marker pilot',
-  html: `<div class="station-marker-inner">
-    <div class="station-marker-pulse"></div>
-    <div class="station-marker-dot pilot"></div>
-  </div>`,
+  className:   'station-marker',
+  html: `
+    <div class="station-marker-inner">
+      <div class="station-marker-pulse"></div>
+      <div class="station-marker-dot pilot"></div>
+    </div>
+  `,
   iconSize:    [30, 30],
   iconAnchor:  [15, 15],
   popupAnchor: [0, -18],
 });
 
+const ALL_BOUNDS: [number, number][] = pilotStations.map(s => s.coordinates);
+
 function FlyToStations() {
   const map = useMap();
   useEffect(() => {
     const timer = setTimeout(() => {
-      map.flyTo([48.82, 73.00], 9, { duration: 2.5, easeLinearity: 0.1 });
+      map.flyToBounds(ALL_BOUNDS, {
+        duration:      2.5,
+        padding:       [50, 50],
+        easeLinearity: 0.1,
+      });
     }, 1500);
     return () => clearTimeout(timer);
   }, [map]);
   return null;
 }
 
-const base = pilotStations.find(s => s.type === 'base')!;
+const akadyr = pilotStations.find(s => s.type === 'base')!;
 const pilots = pilotStations.filter(s => s.type === 'pilot');
 
 export default function KazakhstanMap() {
@@ -58,12 +68,12 @@ export default function KazakhstanMap() {
       />
       <FlyToStations />
 
-      {/* Dashed lines from base to each pilot station */}
+      {/* Dashed routes from base to each pilot station */}
       {pilots.map(s => (
         <Polyline
           key={`line-${s.id}`}
-          positions={[base.coordinates, s.coordinates]}
-          pathOptions={{ color: '#2563eb', weight: 1.5, opacity: 0.45, dashArray: '4 6' }}
+          positions={[akadyr.coordinates, s.coordinates]}
+          pathOptions={{ color: '#2563eb', weight: 1.5, opacity: 0.6, dashArray: '4 6' }}
         />
       ))}
 
@@ -75,20 +85,23 @@ export default function KazakhstanMap() {
           icon={s.type === 'base' ? baseIcon : pilotIcon}
         >
           <Popup>
-            <div
-              dangerouslySetInnerHTML={{
-                __html: `
-                  <div style="font-weight:700;font-size:14px;margin-bottom:4px;color:#f1f5f9">
-                    ${s.name}
-                    ${s.type === 'base'
-                      ? '<span style="color:#d97706;font-size:11px;margin-left:6px;font-weight:600">База</span>'
-                      : ''}
-                  </div>
-                  <div style="font-size:11px;color:#94a3b8;margin-bottom:4px">${s.region}</div>
-                  <div style="font-size:12px;color:#cbd5e1">${s.description}</div>
-                `,
-              }}
-            />
+            <div>
+              <div style={{ fontWeight: 700, fontSize: 14, marginBottom: 4, display: 'flex', alignItems: 'center', gap: 6 }}>
+                {s.name}
+                {s.type === 'base' && (
+                  <span style={{ color: '#d97706', fontSize: 9, background: '#d9770622', border: '1px solid #d9770644', padding: '2px 6px', borderRadius: 4, letterSpacing: 1, textTransform: 'uppercase', fontWeight: 600 }}>
+                    База
+                  </span>
+                )}
+                {s.type === 'pilot' && (
+                  <span style={{ color: '#2563eb', fontSize: 9, background: '#2563eb22', border: '1px solid #2563eb44', padding: '2px 6px', borderRadius: 4, letterSpacing: 1, textTransform: 'uppercase', fontWeight: 600 }}>
+                    Пилот
+                  </span>
+                )}
+              </div>
+              <div style={{ fontSize: 11, color: '#94a3b8', marginBottom: 4 }}>{s.region}</div>
+              <div style={{ fontSize: 12, color: '#cbd5e1' }}>{s.description}</div>
+            </div>
           </Popup>
         </Marker>
       ))}

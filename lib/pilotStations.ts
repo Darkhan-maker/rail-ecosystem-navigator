@@ -11,7 +11,7 @@ export const pilotStations: PilotStation[] = [
   {
     id:          'akadyr',
     name:        'Акадыр',
-    coordinates: [48.864, 72.870], // точные координаты
+    coordinates: [48.26319976046474, 72.85596715373623],
     region:      'Шетский район, Карагандинская область',
     description: 'Станция базирования бригады ШЧ',
     type:        'base',
@@ -19,7 +19,7 @@ export const pilotStations: PilotStation[] = [
   {
     id:          'aysa',
     name:        'Айса',
-    coordinates: [48.95, 72.45], // TODO: заменить на точные координаты после уточнения
+    coordinates: [48.52548335967602, 72.624889635163],
     region:      'Шетский район, Карагандинская область',
     description: 'Контур НЖС · Магистральная сеть',
     type:        'pilot',
@@ -27,7 +27,7 @@ export const pilotStations: PilotStation[] = [
   {
     id:          'dongal',
     name:        'Донгал',
-    coordinates: [48.78, 73.20], // TODO: заменить на точные координаты после уточнения
+    coordinates: [48.058187748755984, 72.91803492515005],
     region:      'Шетский район, Карагандинская область',
     description: 'Контур НЖС · Магистральная сеть',
     type:        'pilot',
@@ -35,7 +35,7 @@ export const pilotStations: PilotStation[] = [
   {
     id:          'bosaga',
     name:        'Босага',
-    coordinates: [48.66, 73.55], // TODO: заменить на точные координаты после уточнения
+    coordinates: [47.881081742075274, 72.95516589392355],
     region:      'Шетский район, Карагандинская область',
     description: 'Контур НЖС · Магистральная сеть',
     type:        'pilot',
