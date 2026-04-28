@@ -13,7 +13,6 @@ const navLinks = [
   { href: '/scenarios', label: 'Сценарии' },
   { href: '/pilot',     label: 'Пилот' },
   { href: '/roadmap',   label: 'Дорожная карта' },
-  { href: '/glossary',  label: 'Глоссарий' },
 ];
 
 const NAV_BG     = 'rgba(8,13,26,0.88)';

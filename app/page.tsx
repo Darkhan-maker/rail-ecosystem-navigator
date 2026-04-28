@@ -6,6 +6,7 @@ import {
   ArrowRight,
 } from 'lucide-react';
 import { contours, roadmapStages } from '@/data/railEcosystemContent';
+import { Term } from '@/components/Term';
 
 // ─── Shared ────────────────────────────────────────────────────────────────────
 
@@ -72,7 +73,9 @@ function HeroSection() {
 
         <p className="text-base md:text-lg leading-relaxed mb-8 max-w-2xl" style={{ color: C.muted }}>
           Единая платформа для контуров обслуживания инфраструктуры, грузовых перевозок
-          и цифрового ядра. От бумажного маршрутного листа до аналитики в реальном времени.
+          и цифрового ядра. От бумажного{' '}
+          <Term termKey="Маршрутный лист">маршрутного листа</Term>{' '}
+          до аналитики в реальном времени.
         </p>
 
         <div className="flex flex-wrap gap-3">
@@ -349,7 +352,7 @@ function PilotSection() {
             </div>
             <h2 className="text-xl font-bold mb-1" style={{ color: C.text }}>RailRoutes MVP · Контур НЖС</h2>
             <p className="text-sm mb-5" style={{ color: C.muted }}>
-              Цифровой маршрутный лист для служебных поездок работников ШЧ.
+              Цифровой маршрутный лист для служебных поездок работников <Term>ШЧ</Term>.
             </p>
             <ul className="space-y-2 mb-6">
               {pilotBullets.map((b) => (

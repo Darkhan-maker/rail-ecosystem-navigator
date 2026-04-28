@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { Route, Container, CheckCircle, Workflow } from 'lucide-react';
 import { scenarios } from '@/data/railEcosystemContent';
 import { ScenarioStepper } from '@/components/ScenarioStepper';
+import { Term } from '@/components/Term';
 import type { Scenario } from '@/types/railEcosystem';
 
 // ─── Constants ─────────────────────────────────────────────────────────────────
@@ -22,14 +23,14 @@ const C = {
 const SCENARIO_META: Record<string, {
   color:    string;
   Icon:     React.ElementType;
-  contour:  string;
+  contour:  React.ReactNode;
   modules:  string;
   results:  string[];
 }> = {
   'shch-trip': {
     color:   '#2563eb',
     Icon:    Route,
-    contour: 'Контур ШЧ (дистанция пути)',
+    contour: <>Контур <Term>ШЧ</Term> (дистанция пути)</>,
     modules: 'RailRoutes · RailDocs · RailSafety · RailAnalytics',
     results: [
       'Каждая поездка имеет цифровой след: исполнитель, маршрут, время, результат работы',

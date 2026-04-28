@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import { IBM_Plex_Sans } from 'next/font/google';
 import './globals.css';
 import Header from '@/components/Header';
+import Footer from '@/components/Footer';
 
 const ibmPlex = IBM_Plex_Sans({
   subsets: ['latin', 'cyrillic'],
@@ -21,6 +22,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body className="min-h-screen antialiased">
         <Header />
         <main>{children}</main>
+        <Footer />
       </body>
     </html>
   );

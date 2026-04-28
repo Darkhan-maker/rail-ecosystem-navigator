@@ -6,6 +6,7 @@ import {
   Check, CheckCircle, XCircle, X, MapPin,
   ChevronDown, HelpCircle,
 } from 'lucide-react';
+import { Term } from '@/components/Term';
 
 // ─── Constants ─────────────────────────────────────────────────────────────────
 
@@ -267,7 +268,7 @@ export default function PilotPage() {
             Пилот RailRoutes для ШЧ
           </h1>
           <p className="text-base leading-relaxed mb-6 max-w-2xl" style={{ color: C.muted }}>
-            Цифровой маршрутный лист на пилотных станциях магистральной сети
+            Цифровой <Term termKey="Маршрутный лист">маршрутный лист</Term> на пилотных станциях магистральной сети
           </p>
 
           <div className="flex flex-wrap gap-2">
@@ -407,7 +408,7 @@ export default function PilotPage() {
                   <div>
                     <div className="text-sm font-bold" style={{ color: C.text }}>{name}</div>
                     <div className="text-xs mt-0.5" style={{ color: C.dim }}>
-                      Контур НЖС · Магистральная сеть
+                      Контур <Term>НЖС</Term> · Магистральная сеть
                     </div>
                   </div>
                 </div>
