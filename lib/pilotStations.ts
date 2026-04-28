@@ -1,32 +1,27 @@
 export interface PilotStation {
-  id:        string;
-  name:      string;
-  coords:    [number, number]; // geographic [longitude, latitude] — approximate
-  svgCoords: [number, number]; // position in KazakhstanMap viewBox "0 0 700 400"
-  region:    string;
+  id:          string;
+  name:        string;
+  coordinates: [number, number]; // [latitude, longitude] — Leaflet convention
+  region:      string;
 }
 
-// SVG mapping: x = 50 + (lon - 51) / 36 * 610,  y = 125 + (55 - lat) / 14 * 170
 export const PILOT_STATIONS: PilotStation[] = [
   {
-    id:        'aisa',
-    name:      'Айса',
-    coords:    [73.17, 49.82],
-    svgCoords: [426, 188],
-    region:    'Карагандинская обл.',
+    id:          'aisa',
+    name:        'Айса',
+    coordinates: [49.5, 75.5],
+    region:      'Карагандинская обл.',
   },
   {
-    id:        'dongal',
-    name:      'Донгал',
-    coords:    [72.43, 49.35],
-    svgCoords: [413, 194],
-    region:    'Карагандинская обл.',
+    id:          'dongal',
+    name:        'Донгал',
+    coordinates: [49.3, 76.0],
+    region:      'Карагандинская обл.',
   },
   {
-    id:        'bosaga',
-    name:      'Босага',
-    coords:    [71.06, 48.67],
-    svgCoords: [390, 202],
-    region:    'Карагандинская обл.',
+    id:          'bosaga',
+    name:        'Босага',
+    coordinates: [49.0, 75.8],
+    region:      'Карагандинская обл.',
   },
 ];
