@@ -88,3 +88,8 @@ body {
   from { opacity: 0; transform: translateY(-6px); }
   to   { opacity: 1; transform: translateY(0);    }
 }
+
+@keyframes mapPulse {
+  0%   { r: 8;  opacity: 0.4; }
+  100% { r: 20; opacity: 0;   }
+}
