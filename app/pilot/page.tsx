@@ -3,11 +3,11 @@
 import { useState } from 'react';
 import {
   Rocket, HardHat, ClipboardCheck, FileSpreadsheet,
-  Check, CheckCircle, XCircle, X,
+  Check, CheckCircle, XCircle, X, MapPin,
   ChevronDown, HelpCircle,
 } from 'lucide-react';
 import { Term } from '@/components/Term';
-import { PilotStationsSection } from '@/components/PilotStationsSection';
+import { PILOT_STATIONS } from '@/lib/pilotStations';
 
 // ─── Constants ─────────────────────────────────────────────────────────────────
 
@@ -389,7 +389,28 @@ export default function PilotPage() {
           <h2 className="text-xl font-bold mb-5" style={{ color: C.text }}>
             Где запускаем
           </h2>
-          <PilotStationsSection />
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+            {PILOT_STATIONS.map(s => (
+              <div
+                key={s.id}
+                className="rounded-xl border flex items-center gap-3 px-4 py-4"
+                style={{ background: C.bg, borderColor: C.border }}
+              >
+                <div
+                  className="w-9 h-9 rounded-lg flex items-center justify-center shrink-0"
+                  style={{ background: C.blue + '15' }}
+                >
+                  <MapPin className="w-4 h-4" style={{ color: C.blue }} />
+                </div>
+                <div>
+                  <div className="text-sm font-bold" style={{ color: C.text }}>{s.name}</div>
+                  <div className="text-xs mt-0.5" style={{ color: C.dim }}>
+                    {s.region} · <Term>НЖС</Term>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
         </section>
 
         {/* 7. Открытые вопросы */}
