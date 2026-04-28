@@ -1,166 +1,189 @@
+import { ChevronDown, Layers, Workflow, Network, Sparkles, Milestone } from 'lucide-react';
 import { roadmapStages, modules } from '@/data/railEcosystemContent';
-import PageHeader from '@/components/PageHeader';
-import { Milestone } from 'lucide-react';
+import { RoadmapProgress } from '@/components/RoadmapProgress';
+import { VS_COLOR, type VisualStatus } from '@/lib/roadmapUtils';
+import { StageCard } from '@/components/StageCard';
 
-const statusConfig = {
-  current: {
-    label: 'Активный этап',
-    dotBg: 'bg-blue-600',
-    dotText: 'text-white',
-    badge: 'bg-green-100 text-green-700',
-    cardBorder: '#2563eb',
-    headerBg: 'linear-gradient(135deg, #eff6ff 0%, #f8fafc 100%)',
-  },
-  next: {
-    label: 'Следующий',
-    dotBg: 'bg-slate-300',
-    dotText: 'text-slate-600',
-    badge: 'bg-blue-100 text-blue-600',
-    cardBorder: '#6366f1',
-    headerBg: 'linear-gradient(135deg, #eef2ff 0%, #f8fafc 100%)',
-  },
-  future: {
-    label: 'Будущий',
-    dotBg: 'bg-slate-200',
-    dotText: 'text-slate-400',
-    badge: 'bg-slate-100 text-slate-500',
-    cardBorder: '#94a3b8',
-    headerBg: 'linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%)',
-  },
+// ─── Constants ─────────────────────────────────────────────────────────────────
+
+const C = {
+  bg:     '#080d1a',
+  card:   '#0c1424',
+  border: '#1a2535',
+  text:   '#e2e8f0',
+  muted:  '#7a90a8',
+  dim:    '#4a6080',
+  blue:   '#2563eb',
 };
 
+// ─── Legend ─────────────────────────────────────────────────────────────────────
+
+const LEGEND: { status: VisualStatus; label: string; pulse: boolean }[] = [
+  { status: 'current',   label: 'Активный',       pulse: true  },
+  { status: 'next',      label: 'Следующий',       pulse: false },
+  { status: 'future',    label: 'Будущий',         pulse: false },
+  { status: 'strategic', label: 'Стратегический',  pulse: false },
+];
+
+// ─── Principles ─────────────────────────────────────────────────────────────────
+
+const PRINCIPLES = [
+  { Icon: Layers,    title: 'От малого к большому',          desc: 'Сначала один модуль на пилотных станциях, потом масштабирование на всю сеть' },
+  { Icon: Workflow,  title: 'От ручного к автоматическому',  desc: 'Каждый этап убирает больше бумажной рутины и ручного ввода' },
+  { Icon: Network,   title: 'От разрозненного к единому',    desc: 'Все модули собираются в одну цифровую экосистему' },
+  { Icon: Sparkles,  title: 'От реактивного к проактивному', desc: 'Финальный этап — предиктивная платформа, которая сама предлагает оптимизации' },
+];
+
+// ─── Stage connector ────────────────────────────────────────────────────────────
+
+function StageConnector() {
+  return (
+    <div className="flex flex-col items-center py-1">
+      <div className="w-px h-5" style={{ background: C.border }} />
+      <ChevronDown className="w-4 h-4 -my-0.5" style={{ color: C.dim }} />
+      <div className="w-px h-4" style={{ background: C.border }} />
+    </div>
+  );
+}
+
+// ─── Page ──────────────────────────────────────────────────────────────────────
+
 export default function RoadmapPage() {
-  const currentCount = roadmapStages.filter(s => s.status === 'current').length;
+  const total   = roadmapStages.length;
+  const current = roadmapStages.filter(s => s.status === 'current').length;
 
   return (
-    <div className="min-h-screen bg-slate-100">
-      <PageHeader
-        Icon={Milestone}
-        title="Дорожная карта Rail Ecosystem"
-        lead="Поэтапное развитие цифровой платформы — от MVP пилота до интеллектуальной экосистемы управления"
-        chips={[
-          { label: `${roadmapStages.length} этапов`, color: '#2563eb' },
-          { label: `${currentCount} активный`, color: '#16a34a' },
-          { label: `${roadmapStages.length - currentCount} планируемых` },
-        ]}
-        accentColor="#6366f1"
-      />
+    <div className="min-h-screen" style={{ background: C.bg }}>
 
-      {/* Stage summary strip */}
-      <div className="bg-white border-b border-slate-200">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-          <div className="flex items-center gap-2 overflow-x-auto pb-1">
-            {roadmapStages.map((stage, i) => {
-              const st = statusConfig[stage.status];
-              return (
-                <div key={stage.number} className="flex items-center gap-2 shrink-0">
-                  <div className="flex items-center gap-2">
-                    <div
-                      className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold ${st.dotBg} ${st.dotText} shrink-0`}
-                    >
-                      {stage.number}
-                    </div>
-                    <span className="text-xs font-medium text-slate-700 whitespace-nowrap">{stage.name}</span>
-                  </div>
-                  {i < roadmapStages.length - 1 && (
-                    <svg className="w-3 h-3 text-slate-300 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
-                    </svg>
+      {/* 1. Hero */}
+      <section className="py-12 md:py-16 border-b" style={{ borderColor: C.border }}>
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div
+            className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-widest mb-5"
+            style={{ color: C.dim }}
+          >
+            <Milestone className="w-3.5 h-3.5" />
+            Стратегия
+          </div>
+          <h1
+            className="text-3xl md:text-4xl font-bold leading-tight mb-3"
+            style={{ color: C.text }}
+          >
+            Дорожная карта развития
+          </h1>
+          <p
+            className="text-base leading-relaxed mb-6 max-w-2xl"
+            style={{ color: C.muted }}
+          >
+            От пилота одного модуля до интеллектуальной платформы масштаба КТЖ
+          </p>
+          <div className="flex flex-wrap gap-2">
+            {[
+              { label: `${total} этапов`,      color: C.blue },
+              { label: `${current} активный`,  color: '#10b981' },
+              { label: `${total - current} планируемых`, color: C.dim },
+            ].map(({ label, color }) => (
+              <span
+                key={label}
+                className="text-xs font-medium px-3 py-1.5 rounded-full border"
+                style={{ color, borderColor: color + '40', background: color + '12' }}
+              >
+                {label}
+              </span>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-6">
+
+        {/* 2. Progress bar */}
+        <RoadmapProgress stages={roadmapStages} />
+
+        {/* 3. Legend */}
+        <div className="flex flex-wrap gap-4 px-1">
+          {LEGEND.map(({ status, label, pulse }) => {
+            const color = VS_COLOR[status];
+            return (
+              <div key={status} className="flex items-center gap-2">
+                <div className="relative w-3 h-3">
+                  {pulse && (
+                    <span
+                      className="absolute inset-0 rounded-full animate-ping"
+                      style={{ background: color, opacity: 0.4 }}
+                    />
                   )}
+                  <span
+                    className="relative block w-3 h-3 rounded-full"
+                    style={{ background: color }}
+                  />
                 </div>
-              );
-            })}
+                <span className="text-xs font-medium" style={{ color: C.muted }}>
+                  {label}
+                </span>
+              </div>
+            );
+          })}
+        </div>
+
+        {/* 4. Stage cards with connectors */}
+        <div>
+          {roadmapStages.map((stage, i) => {
+            const stageModules = modules.filter(m => stage.modules.includes(m.id));
+            return (
+              <div key={stage.number}>
+                <StageCard
+                  stage={stage}
+                  stageModules={stageModules}
+                  index={i}
+                  total={total}
+                />
+                {i < total - 1 && <StageConnector />}
+              </div>
+            );
+          })}
+        </div>
+
+        {/* 5. Principles block */}
+        <div
+          className="rounded-2xl border overflow-hidden"
+          style={{ background: C.card, borderColor: C.border }}
+        >
+          <div className="px-6 py-5 border-b" style={{ borderColor: C.border }}>
+            <div
+              className="text-[10px] font-bold uppercase tracking-widest mb-1"
+              style={{ color: C.dim }}
+            >
+              Подход
+            </div>
+            <h2 className="text-lg font-bold" style={{ color: C.text }}>
+              Как мы движемся
+            </h2>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-0">
+            {PRINCIPLES.map(({ Icon, title, desc }, i) => (
+              <div
+                key={title}
+                className="px-6 py-5 border-b sm:even:border-l last:border-b-0 sm:[&:nth-child(3)]:border-b-0"
+                style={{ borderColor: C.border }}
+              >
+                <div
+                  className="w-8 h-8 rounded-lg flex items-center justify-center mb-3"
+                  style={{ background: C.blue + '15' }}
+                >
+                  <Icon className="w-4 h-4" style={{ color: C.blue }} />
+                </div>
+                <div className="text-sm font-bold mb-1" style={{ color: C.text }}>
+                  {title}
+                </div>
+                <p className="text-xs leading-relaxed" style={{ color: C.muted }}>
+                  {desc}
+                </p>
+              </div>
+            ))}
           </div>
         </div>
-      </div>
 
-      {/* Timeline */}
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
-        <div className="relative">
-          {/* Vertical connector line */}
-          <div className="absolute left-[18px] top-6 bottom-6 w-0.5 bg-slate-200" aria-hidden="true" />
-
-          <div className="space-y-6">
-            {roadmapStages.map((stage) => {
-              const st = statusConfig[stage.status];
-              const stageModules = modules.filter((m) => stage.modules.includes(m.id));
-              const isCurrent = stage.status === 'current';
-
-              return (
-                <div key={stage.number} className="relative flex gap-5 sm:gap-6">
-
-                  {/* Timeline dot with optional pulse */}
-                  <div className="relative z-10 shrink-0 mt-0.5">
-                    {isCurrent && (
-                      <div className="absolute inset-0 rounded-full bg-blue-400 animate-ping opacity-30" />
-                    )}
-                    <div
-                      className={`relative w-9 h-9 rounded-full flex items-center justify-center text-sm font-bold shadow-sm ${st.dotBg} ${st.dotText} ${isCurrent ? 'ring-2 ring-blue-300 ring-offset-2' : ''}`}
-                    >
-                      {stage.number}
-                    </div>
-                  </div>
-
-                  {/* Card */}
-                  <div
-                    className="flex-1 bg-white rounded-2xl overflow-hidden shadow-sm border border-slate-200 min-w-0"
-                    style={{ borderLeftColor: st.cardBorder, borderLeftWidth: isCurrent ? 4 : 2 }}
-                  >
-                    {/* Card header */}
-                    <div className="px-5 py-4 border-b border-slate-100" style={{ background: st.headerBg }}>
-                      <div className="flex items-start justify-between gap-3 flex-wrap">
-                        <div>
-                          <h2 className="text-base font-bold text-slate-900">{stage.name}</h2>
-                          <div className="text-sm text-slate-500 mt-0.5">{stage.subtitle}</div>
-                        </div>
-                        <span className={`text-xs font-semibold px-2.5 py-1 rounded-full shrink-0 ${st.badge}`}>
-                          {st.label}
-                        </span>
-                      </div>
-                    </div>
-
-                    {/* Card body */}
-                    <div className="px-5 py-4 space-y-4">
-                      <p className="text-sm text-slate-600 leading-relaxed">{stage.description}</p>
-
-                      {stage.result && (
-                        <div className="bg-slate-50 rounded-lg px-4 py-3 border-l-2 border-blue-400 mt-3">
-                          <div className="text-[10px] font-bold uppercase tracking-widest text-blue-600 mb-1.5">
-                            Ожидаемый результат
-                          </div>
-                          <p className="text-sm text-slate-600 leading-relaxed">{stage.result}</p>
-                        </div>
-                      )}
-
-                      {stageModules.length > 0 && (
-                        <div>
-                          <div className="text-[10px] font-semibold uppercase tracking-wider text-slate-400 mb-2.5">
-                            Модули этапа
-                          </div>
-                          <div className="flex flex-wrap gap-2">
-                            {stageModules.map((m) => (
-                              <a
-                                key={m.id}
-                                href={`/modules#${m.id}`}
-                                className="group flex items-center gap-2 bg-slate-50 border border-slate-200 rounded-xl px-3 py-1.5 hover:border-blue-200 hover:bg-blue-50 transition-all duration-150 cursor-pointer"
-                              >
-                                <div className="w-1.5 h-1.5 rounded-full bg-slate-400 group-hover:bg-blue-500 shrink-0 transition-colors" />
-                                <div>
-                                  <div className="text-xs font-semibold text-slate-800 group-hover:text-blue-700">{m.name}</div>
-                                  <div className="text-[10px] text-slate-400 leading-tight">{m.russianName}</div>
-                                </div>
-                              </a>
-                            ))}
-                          </div>
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        </div>
       </div>
     </div>
   );
