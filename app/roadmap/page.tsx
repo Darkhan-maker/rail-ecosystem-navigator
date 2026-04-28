@@ -1,4 +1,10 @@
+import type { Metadata } from 'next';
 import { ChevronDown, Layers, Workflow, Network, Sparkles, Milestone } from 'lucide-react';
+
+export const metadata: Metadata = {
+  title: 'Дорожная карта развития — Rail Ecosystem Navigator',
+  description: 'Пять этапов развития Rail Ecosystem: от пилота RailRoutes до интеллектуальной платформы масштаба КТЖ',
+};
 import { roadmapStages, modules } from '@/data/railEcosystemContent';
 import { RoadmapProgress } from '@/components/RoadmapProgress';
 import { VS_COLOR, type VisualStatus } from '@/lib/roadmapUtils';

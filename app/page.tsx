@@ -1,4 +1,11 @@
+import type { Metadata } from 'next';
 import Link from 'next/link';
+
+export const metadata: Metadata = {
+  title: 'Rail Ecosystem Navigator — Цифровая карта эксплуатации железной дороги КТЖ',
+  description: 'Единая платформа для управления служебными поездками, работами, документами и локомотивными бригадами в КТЖ. Версия 0.1 — пилот RailRoutes.',
+  keywords: ['КТЖ', 'железная дорога', 'цифровизация', 'RailRoutes', 'маршрутный лист', 'эксплуатация'],
+};
 import {
   QrCode, FileSpreadsheet, BarChart3,
   AlertTriangle, CheckCircle,

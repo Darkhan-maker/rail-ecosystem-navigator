@@ -1,4 +1,10 @@
+import type { Metadata } from 'next';
 import Link from 'next/link';
+
+export const metadata: Metadata = {
+  title: 'Операционные контуры — Rail Ecosystem Navigator',
+  description: 'Магистральная сеть, грузовые перевозки и цифровое ядро Rail Ecosystem',
+};
 import {
   Route, Container, Cpu, Target, ArrowRight,
   Database, Brain, BarChart3, FileText, Bell, Users, Plug,
