@@ -1,22 +1,9 @@
 'use client';
 
 import { useState } from 'react';
-import dynamic from 'next/dynamic';
+import { KazakhstanMap } from '@/components/KazakhstanMap';
 import { PILOT_STATIONS } from '@/lib/pilotStations';
 import { Term } from '@/components/Term';
-
-const KazakhstanMap = dynamic(
-  () => import('@/components/KazakhstanMap').then(m => ({ default: m.KazakhstanMap })),
-  {
-    ssr:     false,
-    loading: () => (
-      <div
-        className="animate-pulse"
-        style={{ height: 280, background: '#0c1424', borderRadius: '12px 12px 0 0' }}
-      />
-    ),
-  },
-);
 
 const C = {
   bg:     '#080d1a',
@@ -46,10 +33,7 @@ export function PilotStationsSection() {
       </div>
 
       {/* Station list */}
-      <div
-        className="grid grid-cols-1 sm:grid-cols-3"
-        style={{ borderColor: C.border }}
-      >
+      <div className="grid grid-cols-1 sm:grid-cols-3">
         {PILOT_STATIONS.map((s, i) => {
           const isActive = active === s.id;
           return (
@@ -68,10 +52,7 @@ export function PilotStationsSection() {
                   className="w-2 h-2 rounded-full shrink-0"
                   style={{ background: isActive ? C.blue : C.dim }}
                 />
-                <span
-                  className="text-sm font-bold"
-                  style={{ color: isActive ? C.text : C.muted }}
-                >
+                <span className="text-sm font-bold" style={{ color: isActive ? C.text : C.muted }}>
                   {s.name}
                 </span>
               </div>
